@@ -106,7 +106,6 @@ Body: CSV file
 
 ### What is Invalid?
 ❌ Domain has no MX records  
-❌ Domain doesn't exist  
 
 ### What is Skipped?
 ⏭️ Empty/blank rows  
