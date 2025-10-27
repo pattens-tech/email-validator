@@ -265,6 +265,15 @@
                     body: formData
                 });
 
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    // Try to get text for debugging
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text.substring(0, 200));
+                    throw new Error('Server error. Please try again.');
+                }
+
                 const data = await response.json();
 
                 if (!response.ok) {
