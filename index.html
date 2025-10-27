@@ -66,6 +66,21 @@
             to { transform: rotate(360deg); }
         }
 
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
         .result-percentage {
             font-size: 4rem;
             font-weight: 700;
@@ -152,7 +167,10 @@
                     <div class="spinner"></div>
                 </div>
                 <div class="upload-box flex-1 p-8">
-                    <p class="text-white text-xl text-center">Validating...</p>
+                    <p class="text-white text-xl text-center mb-4">Validating...</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
                 </div>
             </div>
 
@@ -240,6 +258,18 @@
             loadingState.classList.remove('hidden');
             loadingState.classList.add('flex');
 
+            // Animate progress bar
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = '0%';
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 100 / 30; // 30 steps over 3 seconds (100ms each)
+                progressBar.style.width = Math.min(progress, 100) + '%';
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 100);
+
             // Create form data
             const formData = new FormData();
             formData.append('file', file);
@@ -281,7 +311,7 @@
             successState.classList.remove('hidden');
             successState.classList.add('flex');
 
-            document.getElementById('resultPercentage').textContent = data.percentage.toFixed(1) + '%';
+            document.getElementById('resultPercentage').textContent = Math.round(data.percentage) + '%';
         }
 
         function showError(message) {
