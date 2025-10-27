@@ -17,5 +17,8 @@
   "license": "MIT",
   "engines": {
     "node": ">=18.x"
+  },
+  "dependencies": {
+    "busboy": "^1.6.0"
   }
 }
