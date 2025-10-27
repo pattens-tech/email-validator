@@ -139,11 +139,7 @@
             <!-- Initial Upload State -->
             <div id="uploadState" class="flex items-center gap-6">
                 <div class="upload-icon flex-shrink-0">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
+                    <img src="https://pattens-tech.github.io/email-validator/assets/upload-icon.png" alt="Upload" style="width: 64px; height: 64px;">
                 </div>
                 <div class="upload-box flex-1 p-8 cursor-pointer" id="dropZone">
                     <p class="text-white text-xl text-center">Upload your contact list to verify email addresses.</p>
@@ -165,16 +161,11 @@
             <!-- Success State -->
             <div id="successState" class="hidden items-center gap-6">
                 <div class="success-icon flex-shrink-0">
-                    <div class="checkmark-circle">
-                        <svg class="checkmark" viewBox="0 0 52 52">
-                            <path fill="none" d="M14 27l7 7 16-16"/>
-                        </svg>
-                    </div>
+                    <img src="https://pattens-tech.github.io/email-validator/assets/upload-again.png" alt="Success" style="width: 64px; height: 64px;">
                 </div>
                 <div class="upload-box flex-1 p-8 text-center">
                     <div class="result-percentage" id="resultPercentage">87%</div>
                     <div class="result-text mt-2">Emails verified</div>
-                    <div class="text-gray-300 text-sm mt-4" id="resultDetails"></div>
                     <button class="reset-button" onclick="resetForm()">Validate Another File</button>
                 </div>
             </div>
@@ -293,8 +284,6 @@
             successState.classList.add('flex');
 
             document.getElementById('resultPercentage').textContent = data.percentage.toFixed(1) + '%';
-            document.getElementById('resultDetails').textContent =
-                `${data.valid} valid out of ${data.total} emails${data.skipped > 0 ? ` (${data.skipped} skipped)` : ''}`;
         }
 
         function showError(message) {
