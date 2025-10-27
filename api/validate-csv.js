@@ -134,7 +134,6 @@ async function validateEmails(emails) {
 
     const total = emailsToValidate.length;
     const percentage = total > 0 ? (validCount / total) * 100 : 0;
-    const skipped = lines.length - total;
 
     return {
         total,
