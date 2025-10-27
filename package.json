@@ -1,0 +1,21 @@
+{
+  "name": "csv-email-validator",
+  "version": "1.0.0",
+  "description": "A simple web application that validates email addresses from CSV files by checking MX records",
+  "main": "api/validate-csv.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "email",
+    "validator",
+    "csv",
+    "mx-records"
+  ],
+  "author": "PATTENS",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.x"
+  }
+}
