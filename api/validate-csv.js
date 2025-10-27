@@ -1,32 +1,47 @@
 const dns = require('dns').promises;
-const { promisify } = require('util');
+const Busboy = require('busboy');
 
 // Parse multipart form data
 async function parseFormData(req) {
     return new Promise((resolve, reject) => {
-        const chunks = [];
-        req.on('data', chunk => chunks.push(chunk));
-        req.on('end', () => {
-            try {
-                const buffer = Buffer.concat(chunks);
-                const boundary = req.headers['content-type'].split('boundary=')[1];
-                const parts = buffer.toString().split(`--${boundary}`);
+        const busboy = Busboy({ headers: req.headers });
+        let csvContent = '';
+        let fileReceived = false;
 
-                for (const part of parts) {
-                    if (part.includes('filename=')) {
-                        const content = part.split('\r\n\r\n')[1];
-                        if (content) {
-                            resolve(content.split('\r\n--')[0]);
-                            return;
-                        }
-                    }
-                }
-                reject(new Error('No file found'));
-            } catch (error) {
-                reject(error);
+        busboy.on('file', (fieldname, file, info) => {
+            const { filename, encoding, mimeType } = info;
+
+            // Check if it's a CSV file
+            if (!filename.endsWith('.csv')) {
+                file.resume(); // drain the file stream
+                reject(new Error('Please upload a valid CSV file'));
+                return;
             }
+
+            fileReceived = true;
+
+            file.on('data', (data) => {
+                csvContent += data.toString('utf8');
+            });
+
+            file.on('end', () => {
+                // File processing complete
+            });
         });
-        req.on('error', reject);
+
+        busboy.on('finish', () => {
+            if (!fileReceived || !csvContent) {
+                reject(new Error('No file uploaded'));
+                return;
+            }
+            resolve(csvContent);
+        });
+
+        busboy.on('error', (error) => {
+            reject(error);
+        });
+
+        req.pipe(busboy);
     });
 }
 
