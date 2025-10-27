@@ -1,14 +1,14 @@
 const dns = require('dns').promises;
-const Busboy = require('busboy');
+const busboy = require('busboy');
 
 // Parse multipart form data
 async function parseFormData(req) {
     return new Promise((resolve, reject) => {
-        const busboy = Busboy({ headers: req.headers });
+        const bb = busboy({ headers: req.headers });
         let csvContent = '';
         let fileReceived = false;
 
-        busboy.on('file', (fieldname, file, info) => {
+        bb.on('file', (fieldname, file, info) => {
             const { filename, encoding, mimeType } = info;
 
             // Check if it's a CSV file
@@ -29,7 +29,7 @@ async function parseFormData(req) {
             });
         });
 
-        busboy.on('finish', () => {
+        bb.on('finish', () => {
             if (!fileReceived || !csvContent) {
                 reject(new Error('No file uploaded'));
                 return;
@@ -37,11 +37,11 @@ async function parseFormData(req) {
             resolve(csvContent);
         });
 
-        busboy.on('error', (error) => {
+        bb.on('error', (error) => {
             reject(error);
         });
 
-        req.pipe(busboy);
+        req.pipe(bb);
     });
 }
 
@@ -147,10 +147,11 @@ async function validateEmails(emails) {
 
 // Vercel serverless function handler
 module.exports = async (req, res) => {
-    // CORS headers
+    // Set headers for all responses
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'OPTIONS') {
         res.status(200).end();
@@ -158,8 +159,7 @@ module.exports = async (req, res) => {
     }
 
     if (req.method !== 'POST') {
-        res.status(405).json({ error: 'Method not allowed' });
-        return;
+        return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
@@ -167,30 +167,27 @@ module.exports = async (req, res) => {
         const csvContent = await parseFormData(req);
 
         if (!csvContent) {
-            res.status(400).json({ error: 'No file uploaded' });
-            return;
+            return res.status(400).json({ error: 'No file uploaded' });
         }
 
         // Extract emails from CSV
         const emails = await processCSV(csvContent);
 
         if (emails.length === 0) {
-            res.status(400).json({ error: 'No valid email addresses found in file' });
-            return;
+            return res.status(400).json({ error: 'No valid email addresses found in file' });
         }
 
         if (emails.length > 300) {
-            res.status(400).json({ error: 'File exceeds 300 email limit' });
-            return;
+            return res.status(400).json({ error: 'File exceeds 300 email limit' });
         }
 
         // Validate emails
         const result = await validateEmails(emails);
 
-        res.status(200).json(result);
+        return res.status(200).json(result);
 
     } catch (error) {
         console.error('Validation error:', error);
-        res.status(500).json({ error: 'Error processing file. Please try again.' });
+        return res.status(500).json({ error: error.message || 'Error processing file. Please try again.' });
     }
 };
