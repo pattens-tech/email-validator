@@ -19,6 +19,7 @@
     "node": ">=18.x"
   },
   "dependencies": {
-    "busboy": "^1.6.0"
+    "busboy": "^1.6.0",
+    "@vercel/analytics": "^1.1.1"
   }
 }
