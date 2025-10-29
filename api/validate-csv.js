@@ -5,8 +5,11 @@ const busboy = require('busboy');
 async function parseFormData(req) {
     return new Promise((resolve, reject) => {
         const bb = busboy({ headers: req.headers });
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
         let csvContent = '';
         let fileReceived = false;
+        let fileSize = 0;
+        let fileSizeExceeded = false;
 
         bb.on('file', (fieldname, file, info) => {
             const { filename, encoding, mimeType } = info;
@@ -21,7 +24,18 @@ async function parseFormData(req) {
             fileReceived = true;
 
             file.on('data', (data) => {
-                csvContent += data.toString('utf8');
+                fileSize += data.length;
+                
+                if (fileSize > MAX_FILE_SIZE) {
+                    fileSizeExceeded = true;
+                    file.resume(); // drain the file stream
+                    reject(new Error('File too large. Maximum size is 5MB'));
+                    return;
+                }
+                
+                if (!fileSizeExceeded) {
+                    csvContent += data.toString('utf8');
+                }
             });
 
             file.on('end', () => {
@@ -187,6 +201,12 @@ module.exports = async (req, res) => {
 
     } catch (error) {
         console.error('Validation error:', error);
+        
+        // Return 413 status for file size errors
+        if (error.message === 'File too large. Maximum size is 5MB') {
+            return res.status(413).json({ error: error.message });
+        }
+        
         return res.status(500).json({ error: error.message || 'Error processing file. Please try again.' });
     }
 };
