@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="__variable_3a0388 __variable_c1e5c9">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,17 +47,10 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        @font-face {
-            font-family: '__Variable_3a0388';
-            src: url(data:font/woff2;base64,d09GMgABAAAAAAQ4AA0AAAAAB3wAAAPhAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGhYbgUIcKgZgADYBNgIkAyAECAsQAAQgBYRtB08b6QVRGD5kPyIMLmQpT3Q3OmL//9M2SrQfJxKJRKJQqFCokGhUKlUqlUqlUpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpQ==) format('woff2');
-        }
-
-        @font-face {
-            font-family: '__Variable_c1e5c9';
-            src: url(data:font/woff2;base64,d09GMgABAAAAAAQ4AA0AAAAAB3wAAAPhAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGhYbgUIcKgZgADYBNgIkAyAECAsQAAQgBYRtB08b6QVRGD5kPyIMLmQpT3Q3OmL//9M2SrQfJxKJRKJQqFCokGhUKlUqlUqlUpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpQ==) format('woff2');
-        }
-
         :root {
             --gradient-background-start: #0f172a;
             --gradient-background-end: #1e293b;
@@ -70,479 +63,52 @@
             --blending-value: hard-light;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            min-height: 100vh;
-            background-color: rgb(2 6 23);
-            color: rgb(241 245 249);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-
-        .fixed {
-            position: fixed;
-        }
-
-        .absolute {
-            position: absolute;
-        }
-
-        .relative {
-            position: relative;
-        }
-
-        .inset-0 {
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-
-        .overflow-hidden {
-            overflow: hidden;
-        }
-
-        .w-full {
-            width: 100%;
-        }
-
-        .h-full {
-            height: 100%;
-        }
-
-        .min-h-screen {
-            min-height: 100vh;
-        }
-
-        .z-10 {
-            z-index: 10;
-        }
-
-        /* Background gradient animation */
-        .gradients-container {
-            filter: url(#blurMe) blur(40px);
-            width: 100%;
-            height: 100%;
-        }
-
+        /* Gradient Animation Keyframes */
         @keyframes first {
-            0% { transform: translate(0, 0) scale(1); }
+            0%, 100% { transform: translate(0, 0) scale(1); }
             25% { transform: translate(-25%, 25%) scale(1.1); }
             50% { transform: translate(25%, 25%) scale(0.9); }
             75% { transform: translate(-25%, -25%) scale(1.05); }
-            100% { transform: translate(0, 0) scale(1); }
         }
 
         @keyframes second {
-            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
             25% { transform: translate(30%, -30%) rotate(90deg) scale(1.1); }
             50% { transform: translate(-30%, 30%) rotate(180deg) scale(0.9); }
             75% { transform: translate(30%, 30%) rotate(270deg) scale(1.05); }
-            100% { transform: translate(0, 0) rotate(360deg) scale(1); }
         }
 
         @keyframes third {
-            0% { transform: translate(0, 0) scale(1); }
+            0%, 100% { transform: translate(0, 0) scale(1); }
             33% { transform: translate(40%, 20%) scale(1.15); }
             66% { transform: translate(-40%, -20%) scale(0.85); }
-            100% { transform: translate(0, 0) scale(1); }
         }
 
         @keyframes fourth {
-            0% { transform: translate(0, 0) scale(1); }
+            0%, 100% { transform: translate(0, 0) scale(1); }
             20% { transform: translate(-35%, -35%) scale(1.1); }
             40% { transform: translate(35%, -35%) scale(0.95); }
             60% { transform: translate(-35%, 35%) scale(1.05); }
             80% { transform: translate(35%, 35%) scale(0.9); }
-            100% { transform: translate(0, 0) scale(1); }
         }
 
         @keyframes fifth {
-            0% { transform: translate(0, 0) rotate(0deg); }
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
             50% { transform: translate(-50%, 50%) rotate(180deg); }
-            100% { transform: translate(0, 0) rotate(360deg); }
-        }
-
-        .animate-first {
-            animation: first 20s ease-in-out infinite;
-        }
-
-        .animate-second {
-            animation: second 25s ease-in-out infinite;
-        }
-
-        .animate-third {
-            animation: third 30s ease-in-out infinite;
-        }
-
-        .animate-fourth {
-            animation: fourth 35s ease-in-out infinite;
-        }
-
-        .animate-fifth {
-            animation: fifth 40s linear infinite;
-        }
-
-        .opacity-50 {
-            opacity: 0.5;
-        }
-
-        .opacity-60 {
-            opacity: 0.6;
-        }
-
-        .opacity-70 {
-            opacity: 0.7;
-        }
-
-        .opacity-100 {
-            opacity: 1;
-        }
-
-        .blur-lg {
-            filter: blur(16px);
-        }
-
-        /* Header styles */
-        .flex {
-            display: flex;
-        }
-
-        .flex-row {
-            flex-direction: row;
-        }
-
-        .items-center {
-            align-items: center;
-        }
-
-        .justify-between {
-            justify-content: space-between;
-        }
-
-        .justify-center {
-            justify-content: center;
-        }
-
-        .gap-2 {
-            gap: 0.5rem;
-        }
-
-        .gap-4 {
-            gap: 1rem;
-        }
-
-        .px-4 {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-
-        .px-6 {
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-        }
-
-        .py-2 {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-        }
-
-        .py-6 {
-            padding-top: 1.5rem;
-            padding-bottom: 1.5rem;
-        }
-
-        .text-sm {
-            font-size: 0.875rem;
-            line-height: 1.25rem;
-        }
-
-        .text-2xl {
-            font-size: 1.5rem;
-            line-height: 2rem;
-        }
-
-        .font-light {
-            font-weight: 300;
-        }
-
-        .font-semibold {
-            font-weight: 600;
-        }
-
-        .text-white {
-            color: rgb(255 255 255);
-        }
-
-        .text-slate-900 {
-            color: rgb(15 23 42);
-        }
-
-        .text-slate-300 {
-            color: rgb(203 213 225);
-        }
-
-        .rounded-sm {
-            border-radius: 0.125rem;
-        }
-
-        .rounded-lg {
-            border-radius: 0.5rem;
-        }
-
-        .border {
-            border-width: 1px;
-        }
-
-        .border-slate-700 {
-            border-color: rgb(51 65 85);
-        }
-
-        .bg-black {
-            background-color: rgb(0 0 0);
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .hover\:opacity-80:hover {
-            opacity: 0.8;
-        }
-
-        .hover\:border-slate-500:hover {
-            border-color: rgb(100 116 139);
-        }
-
-        .hover\:text-white:hover {
-            color: rgb(255 255 255);
-        }
-
-        .hover\:bg-white:hover {
-            background-color: rgb(255 255 255);
-        }
-
-        .transition {
-            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
-        }
-
-        .transition-opacity {
-            transition-property: opacity;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
-        }
-
-        .duration-200 {
-            transition-duration: 200ms;
-        }
-
-        .bg-white\/95 {
-            background-color: rgb(255 255 255 / 0.95);
-        }
-
-        .mr-2 {
-            margin-right: 0.5rem;
-        }
-
-        .h-10 {
-            height: 2.5rem;
-        }
-
-        .w-10 {
-            width: 2.5rem;
-        }
-
-        .inline-flex {
-            display: inline-flex;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .shadow-glow {
-            box-shadow: inset 0 2px 20px #93c5fd, 0 -10px 50px 1px #93c5fd7d;
-        }
-
-        .bottom-0 {
-            bottom: 0;
-        }
-
-        .left-0 {
-            left: 0;
-        }
-
-        .right-0 {
-            right: 0;
-        }
-
-        canvas {
-            background: transparent;
-        }
-
-        @media (min-width: 768px) {
-            .md\:inline-flex {
-                display: inline-flex;
-            }
-            .md\:px-12 {
-                padding-left: 3rem;
-                padding-right: 3rem;
-            }
-        }
-
-        /* Upload container styles */
-        .upload-container {
-            background: linear-gradient(135deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            max-width: 48rem;
-            width: 100%;
-        }
-
-        .p-8 {
-            padding: 2rem;
-        }
-
-        .upload-box {
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            border-radius: 0.75rem;
-            transition: all 0.3s ease;
-            background: rgba(45, 55, 72, 0.5);
-        }
-
-        .upload-box:hover {
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(45, 55, 72, 0.7);
-        }
-
-        .upload-box.dragover {
-            border-color: #0078d4;
-            background: rgba(0, 120, 212, 0.1);
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            width: 48px;
-            height: 48px;
-            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .progress-bar-container {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            overflow: hidden;
-        }
+        .animate-first { animation: first 20s ease-in-out infinite; }
+        .animate-second { animation: second 25s ease-in-out infinite; }
+        .animate-third { animation: third 30s ease-in-out infinite; }
+        .animate-fourth { animation: fourth 35s ease-in-out infinite; }
+        .animate-fifth { animation: fifth 40s linear infinite; }
 
-        .progress-bar {
-            height: 100%;
-            background: white;
-            width: 0%;
-            transition: width 0.1s linear;
-        }
-
-        .result-percentage {
-            font-size: 4rem;
-            font-weight: 700;
-            color: white;
-            line-height: 1;
-        }
-
-        .result-text {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.125rem;
-        }
-
-        .error-text {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.125rem;
-        }
-
-        .success-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .checkmark-circle {
-            width: 40px;
-            height: 40px;
-            border: 3px solid white;
-            border-radius: 50%;
-            position: relative;
-        }
-
-        .checkmark {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: block;
-            stroke-width: 3;
-            stroke: white;
-            stroke-miterlimit: 10;
-        }
-
-        .reset-button {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            padding: 0.75rem 2rem;
-            border-radius: 0.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            font-weight: 500;
-            margin-top: 1.5rem;
-        }
-
-        .reset-button:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* Hero Section Styles */
-        .hero-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4rem;
-            padding: 1.5rem;
-            padding-top: 2.5rem;
-            padding-bottom: 5rem;
-            text-align: center;
-            min-height: calc(100vh - 88px);
-            justify-content: center;
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        .gradients-container {
+            filter: url(#blurMe) blur(40px);
         }
 
         .hero-section.hiding {
@@ -550,78 +116,9 @@
             transform: translateY(-20px);
         }
 
-        .hero-content {
-            max-width: 56rem;
-            margin: 0 auto;
-        }
-
-        .hero-content > * + * {
-            margin-top: 2.5rem;
-        }
-
-        .text-5xl {
-            font-size: 3rem;
-            line-height: 1;
-        }
-
-        .text-xl {
-            font-size: 1.25rem;
-            line-height: 1.75rem;
-        }
-
-        .text-base {
-            font-size: 1rem;
-            line-height: 1.5rem;
-        }
-
-        .max-w-3xl {
-            max-width: 48rem;
-        }
-
-        .text-slate-200\/90 {
-            color: rgb(226 232 240 / 0.9);
-        }
-
-        .text-slate-400\/70 {
-            color: rgb(148 163 184 / 0.7);
-        }
-
-        .px-7 {
-            padding-left: 1.75rem;
-            padding-right: 1.75rem;
-        }
-
-        .py-3 {
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
-        }
-
-        .gap-2 {
-            gap: 0.5rem;
-        }
-
-        .mt-4 {
-            margin-top: 1rem;
-        }
-
-        .cursor-pointer {
-            cursor: pointer;
-        }
-
-        .underline {
-            text-decoration: underline;
-        }
-
-        /* Upload Section Transition */
         .upload-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: calc(100vh - 88px);
-            padding: 2rem;
             opacity: 0;
             transform: translateY(20px);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
             pointer-events: none;
         }
 
@@ -631,169 +128,13 @@
             pointer-events: auto;
         }
 
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 9999;
-            overflow: hidden;
-        }
-
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .modal-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            overflow-y: auto;
-        }
-
-        .modal-content {
-            position: relative;
-            background: linear-gradient(135deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            max-width: 48rem;
-            width: 100%;
-            max-height: 90vh;
-            overflow: hidden;
-            animation: slideUp 0.3s ease-out;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: rgb(255 255 255);
-            margin: 0;
-        }
-
-        .modal-close {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 0.5rem;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: rgb(203 213 225);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
-            color: rgb(255 255 255);
-        }
-
-        .modal-close:focus {
-            outline: 2px solid rgb(59 130 246);
-            outline-offset: 2px;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-            overflow-y: auto;
-            max-height: calc(90vh - 5rem);
-            color: rgb(226 232 240);
-        }
-
-        .modal-body h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: rgb(255 255 255);
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .modal-body h3:first-child {
-            margin-top: 0;
-        }
-
-        .modal-body p {
-            line-height: 1.75;
-            margin-bottom: 1rem;
-            color: rgb(203 213 225);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-        }
-
-        .modal.closing .modal-overlay {
-            animation: fadeOut 0.3s ease-out;
-        }
-
-        .modal.closing .modal-content {
-            animation: slideDown 0.3s ease-out;
-        }
-
-        body.modal-open {
-            overflow: hidden;
-        }
-
-        @media (min-width: 768px) {
-            .text-5xl {
-                font-size: 4.5rem;
-            }
-            .md\:px-12 {
-                padding-left: 3rem;
-                padding-right: 3rem;
-            }
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
         }
     </style>
 
@@ -864,7 +205,7 @@
     }
     </script>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
     <!-- Background Effects -->
     <div class="fixed inset-0 overflow-hidden">
         <!-- Gradient Animation Background -->
@@ -902,8 +243,8 @@
                     </linearGradient>
                 </defs>
             </svg>
-            <div class="absolute bottom-0 left-0 right-0" style="height: 30vh; background: linear-gradient(to bottom, transparent, rgb(3 7 18));"></div>
-            <div class="absolute bottom-0 shadow-glow" style="left: 50%; transform: translateX(-50%); min-width: 50em; width: auto; right: -50%; height: 100vh; margin-bottom: -80vh; border-radius: 100% 100% 100% 100%; background: black;"></div>
+            <div class="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-b from-transparent to-gray-950"></div>
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 min-w-[50em] h-[100vh] -mb-[80vh] rounded-full bg-black" style="box-shadow: inset 0 2px 20px #93c5fd, 0 -10px 50px 1px #93c5fd7d;"></div>
         </div>
     </div>
 
@@ -911,132 +252,131 @@
     <main class="relative z-10 min-h-screen">
         <!-- Header -->
         <header class="flex items-center justify-between px-6 py-6 md:px-12">
-            <a href="/" class="logo flex flex-row items-center hover:opacity-80 transition-opacity">
-                <div class="logo-symbol mr-2 bg-black h-10 w-10 flex items-center justify-center rounded-sm">
+            <a href="/" class="flex flex-row items-center hover:opacity-80 transition-opacity">
+                <div class="mr-2 bg-black h-10 w-10 flex items-center justify-center rounded-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" height="32" width="32" style="margin-top:-8px">
                         <path d="M250 80 L60 270 C40 290 40 320 60 340 C80 360 110 360 130 340 L250 220 L370 340 C390 360 420 360 440 340 C460 320 460 290 440 270 L250 80 Z" fill="white"></path>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-light text-white">Lorem Ipsum</h2>
+                <h2 class="text-2xl font-light text-white">Email Validator</h2>
             </a>
             <div class="flex items-center gap-4">
-                <a class="hidden rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white md:inline-flex" href="https://github.com/pattens-tech/email-validator">Github</a>
-                <a class="rounded-lg bg-white/95 px-4 py-2 text-sm font-semibold text-slate-900 transition duration-200 hover:bg-white" href="https://pattens.tech">Pattens</a>
+                <a class="hidden md:inline-flex rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white" href="https://github.com/pattens-tech">View on GitHub</a>
+                <a class="rounded-lg bg-white/95 px-4 py-2 text-sm font-semibold text-slate-900 transition duration-200 hover:bg-white" href="https://github.com/pattens-tech">Star on GitHub</a>
             </div>
         </header>
 
         <!-- Hero Section -->
-        <div id="heroSection" class="hero-section">
-            <section class="hero-content">
-                <h1 class="text-5xl font-semibold text-white">Verify your email contact list</h1>
-                <p class="max-w-3xl text-xl text-slate-200/90" style="margin-left: auto; margin-right: auto;">We'll check individual email addresses to verify that they are legitimate.</p>
-                <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-                    <button id="verifyNowBtn" class="inline-flex items-center justify-center gap-2 rounded-lg bg-white/95 px-7 py-3 text-base font-semibold text-slate-900 transition duration-200 hover:bg-white" style="border: none; cursor: pointer;">
+        <div id="heroSection" class="hero-section flex flex-col items-center justify-center gap-16 px-6 pb-20 pt-10 text-center min-h-[calc(100vh-88px)] transition-all duration-500">
+            <section class="max-w-4xl mx-auto space-y-10">
+                <h1 class="text-5xl md:text-7xl font-semibold text-white">Verify your email contact list</h1>
+                <p class="max-w-3xl mx-auto text-xl text-slate-200/90">We'll check individual email addresses to verify that they are legitimate.</p>
+                <div class="flex flex-col items-center gap-4">
+                    <button id="verifyNowBtn" class="inline-flex items-center justify-center gap-2 rounded-lg bg-white/95 px-7 py-3 text-base font-semibold text-slate-900 transition duration-200 hover:bg-white cursor-pointer">
                         verify now
                         <span aria-hidden="true" class="text-lg">→</span>
                     </button>
                 </div>
                 <p class="text-sm text-slate-400/70 mt-4">
-                    By uploading your CSV, you agree to our <button class="open-modal underline transition hover:text-white cursor-pointer" style="background: none; border: none; color: inherit; font-size: inherit;">terms and privacy policy</button>.
+                    By uploading your CSV, you agree to our <button class="open-modal underline transition hover:text-white cursor-pointer">terms and privacy policy</button>.
                 </p>
             </section>
         </div>
 
         <!-- Upload Section -->
-        <div id="uploadSection" class="upload-section">
-            <div class="upload-container p-8">
-            <!-- Initial Upload State -->
-            <div id="uploadState" class="flex items-center gap-6">
-                <div class="upload-icon flex-shrink-0">
-                    <img src="https://pattens-tech.github.io/email-validator/assets/upload-icon.png" alt="Upload" style="width: 40px;">
-                </div>
-                <div class="upload-box flex-1 p-8 cursor-pointer" id="dropZone">
-                    <p class="text-white text-xl text-center">Upload your contact list to verify email addresses.</p>
-                    <p class="text-gray-300 text-sm text-center mt-2">Drag & Drop CSV</p>
-                    <input type="file" id="fileInput" accept=".csv" class="hidden">
-                </div>
-            </div>
-
-            <!-- Loading State -->
-            <div id="loadingState" class="hidden items-center gap-6">
-                <div class="upload-icon flex-shrink-0">
-                    <div class="spinner"></div>
-                </div>
-                <div class="upload-box flex-1 p-8">
-                    <p class="text-white text-xl text-center mb-4">Validating...</p>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" id="progressBar"></div>
+        <div id="uploadSection" class="upload-section flex items-center justify-center min-h-[calc(100vh-88px)] p-8 transition-all duration-500">
+            <div class="w-full max-w-3xl p-8 rounded-2xl border border-white/10 shadow-2xl" style="background: linear-gradient(135deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);">
+                <!-- Initial Upload State -->
+                <div id="uploadState" class="flex items-center gap-6">
+                    <div class="flex-shrink-0">
+                        <img src="https://pattens-tech.github.io/email-validator/assets/upload-icon.png" alt="Upload" class="w-10">
+                    </div>
+                    <div id="dropZone" class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl cursor-pointer transition-all bg-slate-800/50 hover:border-white/60 hover:bg-slate-800/70">
+                        <p class="text-white text-xl text-center">Upload your contact list to verify email addresses.</p>
+                        <p class="text-gray-300 text-sm text-center mt-2">Drag & Drop CSV</p>
+                        <input type="file" id="fileInput" accept=".csv" class="hidden">
                     </div>
                 </div>
-            </div>
 
-            <!-- Success State -->
-            <div id="successState" class="hidden items-center gap-6">
-                <div class="success-icon flex-shrink-0">
-                    <img src="https://pattens-tech.github.io/email-validator/assets/upload-again.png" alt="Success" style="width: 40px;">
-                </div>
-                <div class="upload-box flex-1 p-8 text-center">
-                    <div class="result-percentage" id="resultPercentage">87%</div>
-                    <div class="result-text mt-2">Emails verified</div>
-                    <button class="reset-button" onclick="resetForm()">Validate Another File</button>
-                </div>
-            </div>
-
-            <!-- Error State -->
-            <div id="errorState" class="hidden items-center gap-6">
-                <div class="success-icon flex-shrink-0">
-                    <div class="checkmark-circle">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="15" y1="9" x2="9" y2="15"></line>
-                            <line x1="9" y1="9" x2="15" y2="15"></line>
-                        </svg>
+                <!-- Loading State -->
+                <div id="loadingState" class="hidden items-center gap-6">
+                    <div class="flex-shrink-0">
+                        <div class="spinner"></div>
+                    </div>
+                    <div class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl bg-slate-800/50">
+                        <p class="text-white text-xl text-center mb-4">Validating...</p>
+                        <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                            <div id="progressBar" class="h-full bg-white transition-all duration-100" style="width: 0%"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="upload-box flex-1 p-8 text-center">
-                    <div class="error-text" id="errorMessage">Error, try again.</div>
-                    <button class="reset-button" onclick="resetForm()">Try Again</button>
+
+                <!-- Success State -->
+                <div id="successState" class="hidden items-center gap-6">
+                    <div class="flex-shrink-0">
+                        <img src="https://pattens-tech.github.io/email-validator/assets/upload-again.png" alt="Success" class="w-10">
+                    </div>
+                    <div class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl text-center bg-slate-800/50">
+                        <div id="resultPercentage" class="text-6xl font-bold text-white leading-none">87%</div>
+                        <div class="text-slate-200/80 text-lg mt-2">Emails verified</div>
+                        <button onclick="resetForm()" class="mt-6 px-8 py-3 rounded-xl bg-white/15 border border-white/30 text-white font-medium transition-all hover:bg-white/25 hover:border-white/50 cursor-pointer">Validate Another File</button>
+                    </div>
                 </div>
-            </div>
-        </div>
+
+                <!-- Error State -->
+                <div id="errorState" class="hidden items-center gap-6">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl text-center bg-slate-800/50">
+                        <div id="errorMessage" class="text-white/90 text-lg">Error, try again.</div>
+                        <button onclick="resetForm()" class="mt-6 px-8 py-3 rounded-xl bg-white/15 border border-white/30 text-white font-medium transition-all hover:bg-white/25 hover:border-white/50 cursor-pointer">Try Again</button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Terms & Privacy Modal -->
-        <div id="termsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" style="display: none;">
-            <div class="modal-overlay"></div>
-            <div class="modal-container">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 id="modalTitle" class="modal-title">Terms & Privacy</h2>
-                        <button id="closeModal" class="modal-close" aria-label="Close modal">
+        <div id="termsModal" class="modal fixed inset-0 z-[9999] overflow-hidden hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-overlay absolute inset-0 bg-black/85 backdrop-blur-sm"></div>
+            <div class="modal-container relative w-full h-full flex items-center justify-center p-4 overflow-y-auto">
+                <div class="modal-content relative rounded-2xl border border-white/10 max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl" style="background: linear-gradient(135deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);">
+                    <div class="flex items-center justify-between p-6 border-b border-white/10">
+                        <h2 id="modalTitle" class="text-2xl font-semibold text-white">Terms & Privacy</h2>
+                        <button id="closeModal" class="flex items-center justify-center w-10 h-10 rounded-lg bg-transparent border border-white/20 text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white" aria-label="Close modal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
                                 <line x1="6" y1="6" x2="18" y2="18"></line>
                             </svg>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <h3>Lorem Ipsum Dolor Sit Amet</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <div class="p-6 overflow-y-auto max-h-[calc(90vh-5rem)] text-slate-200">
+                        <h3 class="text-lg font-semibold text-white mb-3">Lorem Ipsum Dolor Sit Amet</h3>
+                        <p class="leading-relaxed mb-4 text-slate-300">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 
-                        <h3>Duis Aute Irure Dolor</h3>
-                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <h3 class="text-lg font-semibold text-white mt-6 mb-3">Duis Aute Irure Dolor</h3>
+                        <p class="leading-relaxed mb-4 text-slate-300">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-                        <h3>Sed Ut Perspiciatis Unde</h3>
-                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                        <h3 class="text-lg font-semibold text-white mt-6 mb-3">Sed Ut Perspiciatis Unde</h3>
+                        <p class="leading-relaxed mb-4 text-slate-300">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
 
-                        <h3>Nemo Enim Ipsam Voluptatem</h3>
-                        <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.</p>
+                        <h3 class="text-lg font-semibold text-white mt-6 mb-3">Nemo Enim Ipsam Voluptatem</h3>
+                        <p class="leading-relaxed mb-4 text-slate-300">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.</p>
 
-                        <h3>Ut Enim Ad Minima Veniam</h3>
-                        <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.</p>
+                        <h3 class="text-lg font-semibold text-white mt-6 mb-3">Ut Enim Ad Minima Veniam</h3>
+                        <p class="leading-relaxed mb-4 text-slate-300">Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.</p>
 
-                        <h3>At Vero Eos Et Accusamus</h3>
-                        <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+                        <h3 class="text-lg font-semibold text-white mt-6 mb-3">At Vero Eos Et Accusamus</h3>
+                        <p class="leading-relaxed mb-4 text-slate-300">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
 
-                        <h3>Temporibus Autem Quibusdam</h3>
-                        <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+                        <h3 class="text-lg font-semibold text-white mt-6 mb-3">Temporibus Autem Quibusdam</h3>
+                        <p class="leading-relaxed mb-4 text-slate-300">Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
                     </div>
                 </div>
             </div>
@@ -1103,6 +443,21 @@
         animate();
     </script>
 
+    <!-- Hero to Upload Transition Script -->
+    <script>
+        const heroSection = document.getElementById('heroSection');
+        const uploadSection = document.getElementById('uploadSection');
+        const verifyNowBtn = document.getElementById('verifyNowBtn');
+
+        verifyNowBtn.addEventListener('click', () => {
+            heroSection.classList.add('hiding');
+            setTimeout(() => {
+                heroSection.style.display = 'none';
+                uploadSection.classList.add('visible');
+            }, 500);
+        });
+    </script>
+
     <!-- File Upload Script -->
     <script>
         const dropZone = document.getElementById('dropZone');
@@ -1112,92 +467,68 @@
         const successState = document.getElementById('successState');
         const errorState = document.getElementById('errorState');
 
-        // Click to upload
-        dropZone.addEventListener('click', () => {
-            fileInput.click();
-        });
+        dropZone.addEventListener('click', () => fileInput.click());
 
-        // File selection
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file) {
-                handleFile(file);
-            }
+            if (file) handleFile(file);
         });
 
-        // Drag and drop
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropZone.classList.add('dragover');
+            dropZone.classList.add('border-blue-400', 'bg-blue-900/10', 'scale-105');
         });
 
         dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
+            dropZone.classList.remove('border-blue-400', 'bg-blue-900/10', 'scale-105');
         });
 
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.classList.remove('dragover');
-
+            dropZone.classList.remove('border-blue-400', 'bg-blue-900/10', 'scale-105');
             const file = e.dataTransfer.files[0];
-            if (file) {
-                handleFile(file);
-            }
+            if (file) handleFile(file);
         });
 
         async function handleFile(file) {
-            // Validate file type
             if (!file.name.endsWith('.csv')) {
                 showError('Please upload a valid CSV file');
                 return;
             }
 
-            // Show loading state
             uploadState.classList.add('hidden');
             loadingState.classList.remove('hidden');
             loadingState.classList.add('flex');
 
-            // Animate progress bar
             const progressBar = document.getElementById('progressBar');
             progressBar.style.width = '0%';
             let progress = 0;
             const progressInterval = setInterval(() => {
-                progress += 100 / 30; // 30 steps over 3 seconds (100ms each)
+                progress += 100 / 30;
                 progressBar.style.width = Math.min(progress, 100) + '%';
-                if (progress >= 100) {
-                    clearInterval(progressInterval);
-                }
+                if (progress >= 100) clearInterval(progressInterval);
             }, 100);
 
-            // Create form data
             const formData = new FormData();
             formData.append('file', file);
 
             try {
-                // Send to API
                 const response = await fetch('/api/validate-csv', {
                     method: 'POST',
                     body: formData
                 });
 
-                // Check if response is JSON
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
-                    // Try to get text for debugging
                     const text = await response.text();
                     console.error('Non-JSON response:', text.substring(0, 200));
                     throw new Error('Server error. Please try again.');
                 }
 
                 const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Validation failed');
 
-                if (!response.ok) {
-                    throw new Error(data.error || 'Validation failed');
-                }
-
-                // Show success state
                 showSuccess(data);
-
             } catch (error) {
                 console.error('Error:', error);
                 showError(error.message || 'Error, try again.');
@@ -1209,7 +540,6 @@
             loadingState.classList.remove('flex');
             successState.classList.remove('hidden');
             successState.classList.add('flex');
-
             document.getElementById('resultPercentage').textContent = Math.round(data.percentage) + '%';
         }
 
@@ -1219,7 +549,6 @@
             loadingState.classList.remove('flex');
             errorState.classList.remove('hidden');
             errorState.classList.add('flex');
-
             document.getElementById('errorMessage').textContent = message;
         }
 
@@ -1233,88 +562,39 @@
         }
     </script>
 
-    <!-- Hero to Upload Transition Script -->
-    <script>
-        const heroSection = document.getElementById('heroSection');
-        const uploadSection = document.getElementById('uploadSection');
-        const verifyNowBtn = document.getElementById('verifyNowBtn');
-
-        verifyNowBtn.addEventListener('click', () => {
-            // Hide hero section
-            heroSection.classList.add('hiding');
-
-            // After animation completes, show upload section
-            setTimeout(() => {
-                heroSection.style.display = 'none';
-                uploadSection.classList.add('visible');
-            }, 500);
-        });
-    </script>
-
     <!-- Modal Script -->
     <script>
         const modal = document.getElementById('termsModal');
         const openModalBtns = document.querySelectorAll('.open-modal');
         const closeModalBtn = document.getElementById('closeModal');
         const modalOverlay = document.querySelector('.modal-overlay');
-        const body = document.body;
 
-        // Store the element that triggered the modal for focus management
         let previousActiveElement;
 
-        // Open modal function
         function openModal() {
-            // Store the current active element to return focus later
             previousActiveElement = document.activeElement;
-
-            modal.style.display = 'block';
-            body.classList.add('modal-open');
-
-            // Focus the close button for keyboard navigation
-            setTimeout(() => {
-                closeModalBtn.focus();
-            }, 100);
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            setTimeout(() => closeModalBtn.focus(), 100);
         }
 
-        // Close modal function
         function closeModal() {
-            modal.classList.add('closing');
-
-            // Wait for animation to complete before hiding
-            setTimeout(() => {
-                modal.style.display = 'none';
-                modal.classList.remove('closing');
-                body.classList.remove('modal-open');
-
-                // Return focus to the element that opened the modal
-                if (previousActiveElement) {
-                    previousActiveElement.focus();
-                }
-            }, 300);
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+            if (previousActiveElement) previousActiveElement.focus();
         }
 
-        // Event listeners for opening and closing
-        openModalBtns.forEach(btn => {
-            btn.addEventListener('click', openModal);
-        });
+        openModalBtns.forEach(btn => btn.addEventListener('click', openModal));
         closeModalBtn.addEventListener('click', closeModal);
-
-        // Close modal when clicking on overlay
         modalOverlay.addEventListener('click', closeModal);
 
-        // Close modal on Escape key press
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.style.display === 'block') {
-                closeModal();
-            }
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
         });
 
-        // Focus trap - keep focus within modal when open
         modal.addEventListener('keydown', (e) => {
             if (e.key === 'Tab') {
-                const focusableElements = modal.querySelectorAll(
-                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-                );
+                const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
                 const firstElement = focusableElements[0];
                 const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -1328,10 +608,7 @@
             }
         });
 
-        // Prevent clicks inside modal content from closing the modal
-        document.querySelector('.modal-content').addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
+        document.querySelector('.modal-content').addEventListener('click', (e) => e.stopPropagation());
     </script>
 
     <!-- Vercel Analytics -->
