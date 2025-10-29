@@ -1,8 +1,7 @@
 ---
 name: Agent
-description:
+description: Code developer and reviewer
 
-Development Guidelines
 
 Philosophy
 
