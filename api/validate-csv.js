@@ -1,11 +1,14 @@
 const dns = require('dns').promises;
 const busboy = require('busboy');
 
+// Constants
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const DNS_TIMEOUT_MS = 5000; // 5 seconds
+
 // Parse multipart form data
 async function parseFormData(req) {
     return new Promise((resolve, reject) => {
         const bb = busboy({ headers: req.headers });
-        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
         const FILE_TOO_LARGE_ERROR = 'File too large. Maximum size is 5MB';
         let csvContent = '';
         let fileReceived = false;
@@ -70,8 +73,6 @@ function isValidEmail(email) {
 
 // Check MX records for a domain with timeout protection
 async function checkMXRecords(domain) {
-    const DNS_TIMEOUT_MS = 5000; // 5 seconds
-    
     // Create timeout promise that resolves to false
     const timeoutPromise = new Promise((resolve) => {
         setTimeout(() => resolve(false), DNS_TIMEOUT_MS);
