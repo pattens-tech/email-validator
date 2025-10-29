@@ -44,13 +44,15 @@ Implementing comprehensive security improvements to protect against file size at
 - Email addresses are sanitized before processing
 - Malformed emails handled gracefully
 - Domain extraction validates @ symbol exists
+- All emails counted (valid + invalid = total)
 **Tests**:
 - Test emails with special chars: <, >, ", ', ;, \n, \r
 - Test missing @ symbol
 - Test multiple @ symbols
 - Test empty domain after @
-**Status**: Not Started
-**Files Changed**: `api/validate-csv.js` (isValidEmail, getDomain, processCSV)
+- Test malformed emails counted as invalid, not skipped
+**Status**: Complete
+**Files Changed**: `api/validate-csv.js` (added sanitizeEmail, updated getDomain, processCSV, validateEmails)
 **Estimated Complexity**: Low
 
 ---
