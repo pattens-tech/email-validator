@@ -491,6 +491,26 @@ describe('Email Validator API', () => {
         expect(res.body.invalid).toBe(2); // 2 invalid
         expect(res.body.percentage).toBe(60); // 3/5 * 100
       });
+
+      test('should handle bad-test-emails.csv correctly', async () => {
+        // Content from bad-test-emails.csv:
+        // john.smithicrosoft.com (missing @, malformed)
+        // sarah.jones@google.commm (valid format but bad domain)
+        const csvContent = 'john.smithicrosoft.com\nsarah.jones@google.commm';
+        const req = createMockRequest(csvContent);
+        const res = createMockResponse();
+
+        // Mock DNS to reject both domains
+        dns.resolveMx.mockRejectedValue(new Error('No MX records'));
+
+        await handler(req, res);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.total).toBe(2); // Both emails counted
+        expect(res.body.valid).toBe(0); // Neither has MX records
+        expect(res.body.invalid).toBe(2); // Both invalid (1 malformed, 1 no MX)
+        expect(res.body.percentage).toBe(0); // 0/2 * 100
+      });
     });
   });
 });
