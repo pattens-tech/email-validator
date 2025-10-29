@@ -159,8 +159,8 @@ async function validateEmails(emails) {
     const maxEmails = 300;
     const emailsToValidate = emails.slice(0, maxEmails);
 
-    // Track emails with invalid format separately
-    const invalidFormatEmails = [];
+    // Track emails with invalid format separately (using Set for O(1) lookup)
+    const invalidFormatEmails = new Set();
     
     // Group emails by domain for efficient validation
     const domainMap = new Map();
@@ -168,7 +168,7 @@ async function validateEmails(emails) {
     for (const email of emailsToValidate) {
         // Check if email has valid format
         if (!isValidEmail(email)) {
-            invalidFormatEmails.push(email);
+            invalidFormatEmails.add(email);
             continue;
         }
         
@@ -176,7 +176,7 @@ async function validateEmails(emails) {
         
         // If domain extraction fails (null), treat as invalid format
         if (!domain) {
-            invalidFormatEmails.push(email);
+            invalidFormatEmails.add(email);
             continue;
         }
         
@@ -197,12 +197,12 @@ async function validateEmails(emails) {
 
     // Count valid and invalid emails
     let validCount = 0;
-    let invalidCount = invalidFormatEmails.length; // Start with invalid format count
+    let invalidCount = invalidFormatEmails.size; // Start with invalid format count
 
     // Count emails that passed format validation
     for (const email of emailsToValidate) {
-        // Skip emails already counted as invalid format
-        if (invalidFormatEmails.includes(email)) {
+        // Skip emails already counted as invalid format (O(1) lookup with Set)
+        if (invalidFormatEmails.has(email)) {
             continue;
         }
         
