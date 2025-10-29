@@ -302,12 +302,6 @@ This application uses [Vercel Analytics](https://vercel.com/docs/analytics) to t
 - Clear error messages with recovery options
 - Smooth transitions between states
 
-### Accessibility
-- Keyboard navigation support
-- ARIA labels for screen readers
-- Focus management in modals
-- Semantic HTML structure
-
 ### Responsive Design
 - Mobile-first approach
 - Drag-and-drop file upload
