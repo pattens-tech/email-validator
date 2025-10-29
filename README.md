@@ -28,7 +28,7 @@ A beautiful, modern web application that validates email addresses from CSV file
 
 ## Live Demo
 
-Visit: [https://pattens-tech.github.io/email-validator/](https://pattens-tech.github.io/email-validator/)
+Visit: [https://email-validation-neon.vercel.app)
 
 ## How It Works
 
