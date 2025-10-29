@@ -4,30 +4,30 @@ description:
 
 Development Guidelines
 
-## Philosophy
+Philosophy
 
-### Core Beliefs
+Core Beliefs
 
 - **Incremental progress over big bangs** - Small changes that compile and pass tests
 - **Learning from existing code** - Study and plan before implementing
 - **Pragmatic over dogmatic** - Adapt to project reality
 - **Clear intent over clever code** - Be boring and obvious
 
-### Simplicity Means
+Simplicity Means
 
 - Single responsibility per function/class
 - Avoid premature abstractions
 - No clever tricks - choose the boring solution
 - If you need to explain it, it's too complex
 
-## Process
+Process
 
-### 1. Planning & Staging
+1. Planning & Staging
 
 Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 
 ```markdown
-## Stage N: [Name]
+ Stage N: [Name]
 **Goal**: [Specific deliverable]
 **Success Criteria**: [Testable outcomes]
 **Tests**: [Specific test cases]
@@ -36,7 +36,7 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 - Update status as you progress
 - Remove file when all stages are done
 
-### 2. Implementation Flow
+ 2. Implementation Flow
 
 1. **Understand** - Study existing patterns in codebase
 2. **Test** - Write test first (red)
@@ -44,7 +44,7 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 4. **Refactor** - Clean up with tests passing
 5. **Commit** - With clear message linking to plan
 
-### 3. When Stuck (After 3 Attempts)
+ 3. When Stuck (After 3 Attempts)
 
 **CRITICAL**: Maximum 3 attempts per issue, then STOP.
 
@@ -67,16 +67,16 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
    - Different architectural pattern?
    - Remove abstraction instead of adding?
 
-## Technical Standards
+ Technical Standards
 
-### Architecture Principles
+ Architecture Principles
 
 - **Composition over inheritance** - Use dependency injection
 - **Interfaces over singletons** - Enable testing and flexibility
 - **Explicit over implicit** - Clear data flow and dependencies
 - **Test-driven when possible** - Never disable tests, fix them
 
-### Code Quality
+ Code Quality
 
 - **Every commit must**:
   - Compile successfully
@@ -89,14 +89,14 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
   - Self-review changes
   - Ensure commit message explains "why"
 
-### Error Handling
+ Error Handling
 
 - Fail fast with descriptive messages
 - Include context for debugging
 - Handle errors at appropriate level
 - Never silently swallow exceptions
 
-## Decision Framework
+ Decision Framework
 
 When multiple valid approaches exist, choose based on:
 
@@ -106,25 +106,25 @@ When multiple valid approaches exist, choose based on:
 4. **Simplicity** - Is this the simplest solution that works?
 5. **Reversibility** - How hard to change later?
 
-## Project Integration
+ Project Integration
 
-### Learning the Codebase
+ Learning the Codebase
 
 - Find 3 similar features/components
 - Identify common patterns and conventions
 - Use same libraries/utilities when possible
 - Follow existing test patterns
 
-### Tooling
+ Tooling
 
 - Use project's existing build system
 - Use project's test framework
 - Use project's formatter/linter settings
 - Don't introduce new tools without strong justification
 
-## Quality Gates
+ Quality Gates
 
-### Definition of Done
+ Definition of Done
 
 - [ ] Tests written and passing
 - [ ] Code follows project conventions
@@ -133,7 +133,7 @@ When multiple valid approaches exist, choose based on:
 - [ ] Implementation matches plan
 - [ ] No TODOs without issue numbers
 
-### Test Guidelines
+ Test Guidelines
 
 - Test behavior, not implementation
 - One assertion per test when possible
@@ -141,7 +141,7 @@ When multiple valid approaches exist, choose based on:
 - Use existing test utilities/helpers
 - Tests should be deterministic
 
-## Important Reminders
+ Important Reminders
 
 **NEVER**:
 - Use `--no-verify` to bypass commit hooks
@@ -156,6 +156,6 @@ When multiple valid approaches exist, choose based on:
 - Stop after 3 failed attempts and reassess
 ---
 
-# My Agent
+ My Agent
 
 
