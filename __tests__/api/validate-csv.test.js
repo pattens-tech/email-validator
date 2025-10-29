@@ -16,12 +16,20 @@ const isValidEmail = (email) => {
 const getDomain = (email) => email.split('@')[1];
 
 const checkMXRecords = async (domain) => {
-  try {
-    const records = await dns.resolveMx(domain);
-    return records && records.length > 0;
-  } catch (error) {
-    return false;
-  }
+  const DNS_TIMEOUT_MS = 5000; // 5 seconds
+  
+  // Create timeout promise that resolves to false
+  const timeoutPromise = new Promise((resolve) => {
+    setTimeout(() => resolve(false), DNS_TIMEOUT_MS);
+  });
+  
+  // Create DNS lookup promise
+  const dnsPromise = dns.resolveMx(domain)
+    .then(records => records && records.length > 0)
+    .catch(() => false); // DNS errors return false
+  
+  // Race DNS lookup against timeout
+  return Promise.race([dnsPromise, timeoutPromise]);
 };
 
 const processCSV = async (csvContent) => {
@@ -99,6 +107,84 @@ describe('Email Validator API', () => {
       const result = await checkMXRecords('failing-domain.test');
       expect(result).toBe(false);
     });
+  });
+
+  describe('DNS timeout protection', () => {
+    test('should return false when DNS lookup exceeds 5 second timeout', async () => {
+      // Mock a DNS lookup that takes longer than the timeout
+      dns.resolveMx.mockImplementation(() => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve([{ exchange: 'mail.example.com', priority: 10 }]);
+          }, 6000); // 6 seconds - longer than 5 second timeout
+        });
+      });
+
+      const startTime = Date.now();
+      const result = await checkMXRecords('slow-domain.test');
+      const elapsedTime = Date.now() - startTime;
+
+      expect(result).toBe(false);
+      // Should timeout around 5 seconds, not wait full 6 seconds
+      expect(elapsedTime).toBeLessThan(5500);
+      expect(elapsedTime).toBeGreaterThanOrEqual(4900);
+    }, 10000); // 10 second timeout for this test
+
+    test('should return correct result when DNS lookup completes quickly', async () => {
+      // Mock a fast DNS lookup (under 1 second)
+      dns.resolveMx.mockImplementation(() => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve([{ exchange: 'mail.example.com', priority: 10 }]);
+          }, 100); // 100ms - much faster than timeout
+        });
+      });
+
+      const startTime = Date.now();
+      const result = await checkMXRecords('fast-domain.test');
+      const elapsedTime = Date.now() - startTime;
+
+      expect(result).toBe(true);
+      // Should complete quickly, not wait for timeout
+      expect(elapsedTime).toBeLessThan(1000);
+    });
+
+    test('should handle multiple concurrent DNS lookups with mixed timeouts', async () => {
+      // Set up different mock responses for different domains
+      dns.resolveMx.mockImplementation((domain) => {
+        if (domain === 'fast.test') {
+          // Fast response
+          return Promise.resolve([{ exchange: 'mail.fast.test', priority: 10 }]);
+        } else if (domain === 'slow.test') {
+          // Slow response that will timeout
+          return new Promise((resolve) => {
+            setTimeout(() => resolve([{ exchange: 'mail.slow.test', priority: 10 }]), 6000);
+          });
+        } else if (domain === 'error.test') {
+          // DNS error
+          return Promise.reject(new Error('DNS lookup failed'));
+        }
+      });
+
+      // Run multiple DNS checks concurrently
+      const startTime = Date.now();
+      const results = await Promise.all([
+        checkMXRecords('fast.test'),
+        checkMXRecords('slow.test'),
+        checkMXRecords('error.test')
+      ]);
+      const elapsedTime = Date.now() - startTime;
+
+      // Fast lookup should succeed
+      expect(results[0]).toBe(true);
+      // Slow lookup should timeout and return false
+      expect(results[1]).toBe(false);
+      // Error lookup should return false
+      expect(results[2]).toBe(false);
+
+      // Should complete around 5 seconds (timeout of slowest), not 6+
+      expect(elapsedTime).toBeLessThan(5500);
+    }, 10000); // 10 second timeout for this test
   });
 
   describe('CSV processing', () => {

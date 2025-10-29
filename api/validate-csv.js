@@ -68,15 +68,22 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Check MX records for a domain
+// Check MX records for a domain with timeout protection
 async function checkMXRecords(domain) {
-    try {
-        const records = await dns.resolveMx(domain);
-        return records && records.length > 0;
-    } catch (error) {
-        // Domain doesn't have MX records or DNS lookup failed
-        return false;
-    }
+    const DNS_TIMEOUT_MS = 5000; // 5 seconds
+    
+    // Create timeout promise that resolves to false
+    const timeoutPromise = new Promise((resolve) => {
+        setTimeout(() => resolve(false), DNS_TIMEOUT_MS);
+    });
+    
+    // Create DNS lookup promise
+    const dnsPromise = dns.resolveMx(domain)
+        .then(records => records && records.length > 0)
+        .catch(() => false); // DNS errors return false
+    
+    // Race DNS lookup against timeout
+    return Promise.race([dnsPromise, timeoutPromise]);
 }
 
 // Extract domain from email
