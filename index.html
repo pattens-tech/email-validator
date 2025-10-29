@@ -1,29 +1,373 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="__variable_3a0388 __variable_c1e5c9">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Validator - PATTENS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Verify your email contact list</title>
     <style>
-        body {
+        @font-face {
+            font-family: '__Variable_3a0388';
+            src: url(data:font/woff2;base64,d09GMgABAAAAAAQ4AA0AAAAAB3wAAAPhAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGhYbgUIcKgZgADYBNgIkAyAECAsQAAQgBYRtB08b6QVRGD5kPyIMLmQpT3Q3OmL//9M2SrQfJxKJRKJQqFCokGhUKlUqlUqlUpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpQ==) format('woff2');
+        }
+
+        @font-face {
+            font-family: '__Variable_c1e5c9';
+            src: url(data:font/woff2;base64,d09GMgABAAAAAAQ4AA0AAAAAB3wAAAPhAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGhYbgUIcKgZgADYBNgIkAyAECAsQAAQgBYRtB08b6QVRGD5kPyIMLmQpT3Q3OmL//9M2SrQfJxKJRKJQqFCokGhUKlUqlUqlUpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpVKpVKpUKpVKpQ==) format('woff2');
+        }
+
+        :root {
+            --gradient-background-start: #0f172a;
+            --gradient-background-end: #1e293b;
+            --first-color: 59, 130, 246;
+            --second-color: 139, 92, 246;
+            --third-color: 236, 72, 153;
+            --fourth-color: 249, 115, 22;
+            --fifth-color: 16, 185, 129;
+            --size: 80%;
+            --blending-value: hard-light;
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             min-height: 100vh;
-            background: url('https://pattens-tech.github.io/email-validator/assets/background.jpg') center center / cover no-repeat fixed;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: rgb(2 6 23);
+            color: rgb(241 245 249);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
-        .logo {
-            width: 200px;
-            height: auto;
+        .fixed {
+            position: fixed;
         }
 
+        .absolute {
+            position: absolute;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .inset-0 {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .overflow-hidden {
+            overflow: hidden;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .h-full {
+            height: 100%;
+        }
+
+        .min-h-screen {
+            min-height: 100vh;
+        }
+
+        .z-10 {
+            z-index: 10;
+        }
+
+        /* Background gradient animation */
+        .gradients-container {
+            filter: url(#blurMe) blur(40px);
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes first {
+            0% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(-25%, 25%) scale(1.1); }
+            50% { transform: translate(25%, 25%) scale(0.9); }
+            75% { transform: translate(-25%, -25%) scale(1.05); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        @keyframes second {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(30%, -30%) rotate(90deg) scale(1.1); }
+            50% { transform: translate(-30%, 30%) rotate(180deg) scale(0.9); }
+            75% { transform: translate(30%, 30%) rotate(270deg) scale(1.05); }
+            100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+        }
+
+        @keyframes third {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40%, 20%) scale(1.15); }
+            66% { transform: translate(-40%, -20%) scale(0.85); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        @keyframes fourth {
+            0% { transform: translate(0, 0) scale(1); }
+            20% { transform: translate(-35%, -35%) scale(1.1); }
+            40% { transform: translate(35%, -35%) scale(0.95); }
+            60% { transform: translate(-35%, 35%) scale(1.05); }
+            80% { transform: translate(35%, 35%) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        @keyframes fifth {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-50%, 50%) rotate(180deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        .animate-first {
+            animation: first 20s ease-in-out infinite;
+        }
+
+        .animate-second {
+            animation: second 25s ease-in-out infinite;
+        }
+
+        .animate-third {
+            animation: third 30s ease-in-out infinite;
+        }
+
+        .animate-fourth {
+            animation: fourth 35s ease-in-out infinite;
+        }
+
+        .animate-fifth {
+            animation: fifth 40s linear infinite;
+        }
+
+        .opacity-50 {
+            opacity: 0.5;
+        }
+
+        .opacity-60 {
+            opacity: 0.6;
+        }
+
+        .opacity-70 {
+            opacity: 0.7;
+        }
+
+        .opacity-100 {
+            opacity: 1;
+        }
+
+        .blur-lg {
+            filter: blur(16px);
+        }
+
+        /* Header styles */
+        .flex {
+            display: flex;
+        }
+
+        .flex-row {
+            flex-direction: row;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .px-6 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .py-6 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        .text-2xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+
+        .font-light {
+            font-weight: 300;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .text-white {
+            color: rgb(255 255 255);
+        }
+
+        .text-slate-900 {
+            color: rgb(15 23 42);
+        }
+
+        .text-slate-300 {
+            color: rgb(203 213 225);
+        }
+
+        .rounded-sm {
+            border-radius: 0.125rem;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .border {
+            border-width: 1px;
+        }
+
+        .border-slate-700 {
+            border-color: rgb(51 65 85);
+        }
+
+        .bg-black {
+            background-color: rgb(0 0 0);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .hover\:opacity-80:hover {
+            opacity: 0.8;
+        }
+
+        .hover\:border-slate-500:hover {
+            border-color: rgb(100 116 139);
+        }
+
+        .hover\:text-white:hover {
+            color: rgb(255 255 255);
+        }
+
+        .hover\:bg-white:hover {
+            background-color: rgb(255 255 255);
+        }
+
+        .transition {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .transition-opacity {
+            transition-property: opacity;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+
+        .bg-white\/95 {
+            background-color: rgb(255 255 255 / 0.95);
+        }
+
+        .mr-2 {
+            margin-right: 0.5rem;
+        }
+
+        .h-10 {
+            height: 2.5rem;
+        }
+
+        .w-10 {
+            width: 2.5rem;
+        }
+
+        .inline-flex {
+            display: inline-flex;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .shadow-glow {
+            box-shadow: inset 0 2px 20px #93c5fd, 0 -10px 50px 1px #93c5fd7d;
+        }
+
+        .bottom-0 {
+            bottom: 0;
+        }
+
+        .left-0 {
+            left: 0;
+        }
+
+        .right-0 {
+            right: 0;
+        }
+
+        canvas {
+            background: transparent;
+        }
+
+        @media (min-width: 768px) {
+            .md\:inline-flex {
+                display: inline-flex;
+            }
+            .md\:px-12 {
+                padding-left: 3rem;
+                padding-right: 3rem;
+            }
+        }
+
+        /* Upload container styles */
         .upload-container {
-            background: rgba(71, 85, 105, 0.9);
+            background: linear-gradient(135deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 1rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 48rem;
+            width: 100%;
+        }
+
+        .p-8 {
+            padding: 2rem;
         }
 
         .upload-box {
@@ -144,11 +488,70 @@
         }
     </style>
 </head>
-<body>
-    <div class="min-h-screen flex flex-col items-center justify-center p-8">
-        <img src="https://pattens-tech.github.io/email-validator/assets/logo.png" alt="PATTENS" class="logo mb-12">
+<body class="min-h-screen">
+    <!-- Background Effects -->
+    <div class="fixed inset-0 overflow-hidden">
+        <!-- Gradient Animation Background -->
+        <div class="fixed inset-0 w-full h-full overflow-hidden opacity-60" style="background: linear-gradient(40deg, var(--gradient-background-start), var(--gradient-background-end));">
+            <svg class="hidden">
+                <defs>
+                    <filter id="blurMe">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
+                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo"></feColorMatrix>
+                        <feBlend in="SourceGraphic" in2="goo"></feBlend>
+                    </filter>
+                </defs>
+            </svg>
+            <div class="gradients-container h-full w-full blur-lg">
+                <div class="absolute animate-first opacity-100" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, var(--first-color) 0, var(--first-color) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: center center;"></div>
+                <div class="absolute animate-second opacity-100" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, rgba(var(--second-color), 0.8) 0, rgba(var(--second-color), 0) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: calc(50% - 400px);"></div>
+                <div class="absolute animate-third opacity-100" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, rgba(var(--third-color), 0.8) 0, rgba(var(--third-color), 0) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: calc(50% + 400px);"></div>
+                <div class="absolute animate-fourth opacity-70" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, rgba(var(--fourth-color), 0.8) 0, rgba(var(--fourth-color), 0) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: calc(50% - 200px);"></div>
+                <div class="absolute animate-fifth opacity-100" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, rgba(var(--fifth-color), 0.8) 0, rgba(var(--fifth-color), 0) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: calc(50% - 800px) calc(50% + 800px);"></div>
+            </div>
+        </div>
 
-        <div class="upload-container p-8 max-w-3xl w-full">
+        <!-- Stars Background -->
+        <div class="fixed inset-0 h-full w-full overflow-hidden">
+            <canvas id="starsCanvas" class="h-full w-full absolute inset-0 opacity-50"></canvas>
+        </div>
+
+        <!-- Bottom Glow Effect -->
+        <div class="fixed inset-0 h-full w-full overflow-hidden">
+            <svg class="w-full h-full absolute inset-0 opacity-60">
+                <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#2EB9DF;stop-opacity:0"></stop>
+                        <stop offset="100%" style="stop-color:#9E00FF;stop-opacity:1"></stop>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="absolute bottom-0 left-0 right-0" style="height: 30vh; background: linear-gradient(to bottom, transparent, rgb(3 7 18));"></div>
+            <div class="absolute bottom-0 shadow-glow" style="left: 50%; transform: translateX(-50%); min-width: 50em; width: auto; right: -50%; height: 100vh; margin-bottom: -80vh; border-radius: 100% 100% 100% 100%; background: black;"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="relative z-10 min-h-screen">
+        <!-- Header -->
+        <header class="flex items-center justify-between px-6 py-6 md:px-12">
+            <a href="/" class="logo flex flex-row items-center hover:opacity-80 transition-opacity">
+                <div class="logo-symbol mr-2 bg-black h-10 w-10 flex items-center justify-center rounded-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" height="32" width="32" style="margin-top:-8px">
+                        <path d="M250 80 L60 270 C40 290 40 320 60 340 C80 360 110 360 130 340 L250 220 L370 340 C390 360 420 360 440 340 C460 320 460 290 440 270 L250 80 Z" fill="white"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-light text-white">Lorem Ipsum</h2>
+            </a>
+            <div class="flex items-center gap-4">
+                <a class="hidden rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-slate-500 hover:text-white md:inline-flex" href="#">Lorem Ipsum Dolor</a>
+                <a class="rounded-lg bg-white/95 px-4 py-2 text-sm font-semibold text-slate-900 transition duration-200 hover:bg-white" href="#">Lorem In</a>
+            </div>
+        </header>
+
+        <!-- Upload Section -->
+        <div class="flex items-center justify-center" style="min-height: calc(100vh - 88px); padding: 2rem;">
+            <div class="upload-container p-8">
             <!-- Initial Upload State -->
             <div id="uploadState" class="flex items-center gap-6">
                 <div class="upload-icon flex-shrink-0">
@@ -203,8 +606,71 @@
                 </div>
             </div>
         </div>
-    </div>
+            </div>
+        </div>
+    </main>
 
+    <!-- Stars Animation Script -->
+    <script>
+        const canvas = document.getElementById('starsCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random();
+                this.fadeSpeed = (Math.random() - 0.5) * 0.01;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+                this.opacity += this.fadeSpeed;
+                if (this.opacity <= 0 || this.opacity >= 1) this.fadeSpeed *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const stars = [];
+        for (let i = 0; i < 150; i++) {
+            stars.push(new Star());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+
+    <!-- File Upload Script -->
     <script>
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
