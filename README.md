@@ -226,23 +226,93 @@ Sample CSV files for testing:
 - **Validation Time**: 30-60 seconds for 300 emails
 - **No Dependencies**: Uses CDN for Tailwind CSS
 
-## Security Features (Stage 3: Input Sanitization)
+## 🛡️ Security Features
 
-### Input Sanitization
-- **XSS Prevention**: Removes `<` and `>` characters
-- **SQL Injection Prevention**: Removes quotes and semicolons
-- **Command Injection Prevention**: Removes backslashes
-- **CRLF Injection Prevention**: Removes `\r` and `\n` characters
+This application implements comprehensive security protections following industry best practices:
 
-### Robust Error Handling
-- No crashes on malformed input (missing @, multiple @, empty domains)
-- Graceful handling of edge cases
-- All emails properly counted for accurate reporting
+### 1. File Size Protection
+- **Maximum upload size**: 5MB
+- **Protection**: Prevents memory exhaustion attacks
+- **Behavior**: Returns HTTP 413 status for oversized files with clear error message
+- **Implementation**: Real-time file size tracking during upload
 
-### File Size Protection
-- Maximum file size: 5MB
-- Prevents memory exhaustion attacks
-- Clear error messages (413 status for oversized files)
+### 2. DNS Timeout Protection
+- **Timeout duration**: 5 seconds per DNS lookup
+- **Protection**: Prevents hanging requests from unresponsive DNS servers
+- **Behavior**: Timeouts treated as validation failures, not errors
+- **Implementation**: Promise.race pattern for non-blocking concurrent lookups
+
+### 3. Input Sanitization
+- **Dangerous characters removed**: `<`, `>`, `"`, `'`, `;`, `\`, newlines, tabs
+- **Protection**: Prevents injection attacks and handles malformed emails
+- **Behavior**: All emails counted (valid + invalid = total processed)
+- **Implementation**: 
+  - Sanitization before validation
+  - Safe domain extraction with null checks
+  - Malformed emails counted as invalid, not skipped
+
+### 4. Rate Limiting
+- **Limit**: 10 requests per minute per IP address
+- **Protection**: Prevents denial-of-service (DoS) attacks
+- **Behavior**: HTTP 429 status returned when limit exceeded
+- **Implementation**: In-memory rate tracking with automatic reset
+
+### 5. Security Headers
+Comprehensive HTTP security headers on all API responses:
+- **X-Content-Type-Options**: `nosniff` - Prevents MIME sniffing attacks
+- **X-Frame-Options**: `DENY` - Prevents clickjacking via iframe embedding
+- **X-XSS-Protection**: `1; mode=block` - Enables browser XSS filter
+- **Referrer-Policy**: `strict-origin-when-cross-origin` - Protects user privacy
+- **Content-Security-Policy**: `default-src 'none'; frame-ancestors 'none'` - Blocks unauthorized content loading
+
+## 📊 Analytics & Monitoring
+
+### Vercel Analytics Integration
+
+This application uses [Vercel Analytics](https://vercel.com/docs/analytics) to track:
+
+**User Events**:
+- ✅ **Validation Success**: Tracks successful email validations with metrics
+  - Total emails processed
+  - Valid email count
+  - Invalid email count
+  - Success percentage
+- ❌ **Validation Error**: Tracks validation failures with error messages
+  - Error type and message
+  - Helps identify common issues
+
+**Benefits**:
+- Real-time performance monitoring
+- User engagement insights
+- Error detection and debugging
+- Privacy-focused (no PII tracked)
+
+### Data Privacy
+
+- **No email storage**: Email addresses are never stored or logged
+- **Ephemeral processing**: All data deleted after validation completes
+- **Anonymous analytics**: Only aggregated, anonymized metrics tracked
+- **GDPR compliant**: No personal data retention
+
+## 🎨 UX Features
+
+### Real-time Feedback
+- Live email count during validation
+- Detailed results breakdown (valid/invalid/total)
+- Clear error messages with recovery options
+- Smooth transitions between states
+
+### Accessibility
+- Keyboard navigation support
+- ARIA labels for screen readers
+- Focus management in modals
+- Semantic HTML structure
+
+### Responsive Design
+- Mobile-first approach
+- Drag-and-drop file upload
+- Touch-friendly interactions
+- Adaptive layouts for all screen sizes
 
 ## Limitations
 
