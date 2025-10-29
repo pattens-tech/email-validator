@@ -748,21 +748,21 @@
                     <h1 class="text-5xl font-semibold text-white md:text-7xl">Verify your email contact list</h1>
                     <p class="max-w-3xl text-xl text-slate-200/90">We'll check individual email addresses to verify that they are legitimate.</p>
                     <div class="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                        <a class="inline-flex items-center justify-center gap-2 rounded-lg bg-white/95 px-7 py-3 text-base font-semibold text-slate-900 transition duration-200 hover:bg-white" href="#">
+                        <a class="inline-flex items-center justify-center gap-2 rounded-lg bg-white/95 px-7 py-3 text-base font-semibold text-slate-900 transition duration-200 hover:bg-white" href="index.html">
                             verify now
                             <span aria-hidden="true" class="text-lg">→</span>
                         </a>
-                        <button class="inline-flex items-center justify-center gap-2 rounded-lg border border-white px-7 py-3 text-base font-semibold text-white/80 transition duration-200 hover:border-white hover:text-white">
-                            learn more
-                        </button>
                     </div>
+                    <p class="text-sm text-slate-400/70 mt-4">
+                        By uploading your CSV, you agree to our <button class="open-modal underline transition hover:text-white cursor-pointer">terms and privacy policy</button>.
+                    </p>
                 </section>
             </main>
 
             <!-- Footer -->
             <footer class="border-t border-white/10 px-6 py-6 text-center text-slate-400/70 md:px-12">
                 <span class="text-slate-300">
-                    Lorem ipsum dolor: <button id="openModal" class="underline transition hover:text-white cursor-pointer">Terms & Privacy</button>
+                    Lorem ipsum dolor: <button class="open-modal underline transition hover:text-white cursor-pointer">Terms & Privacy</button>
                 </span>
             </footer>
         </div>
@@ -871,7 +871,7 @@
     <!-- Modal Script -->
     <script>
         const modal = document.getElementById('termsModal');
-        const openModalBtn = document.getElementById('openModal');
+        const openModalBtns = document.querySelectorAll('.open-modal');
         const closeModalBtn = document.getElementById('closeModal');
         const modalOverlay = document.querySelector('.modal-overlay');
         const body = document.body;
@@ -911,7 +911,9 @@
         }
 
         // Event listeners for opening and closing
-        openModalBtn.addEventListener('click', openModal);
+        openModalBtns.forEach(btn => {
+            btn.addEventListener('click', openModal);
+        });
         closeModalBtn.addEventListener('click', closeModal);
 
         // Close modal when clicking on overlay
