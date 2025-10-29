@@ -124,6 +124,39 @@ vercel --prod
 
 3. Open [http://localhost:3000](http://localhost:3000)
 
+## Testing
+
+The project uses Jest for testing the validation logic.
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode (for development)
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+```
+
+### Test Structure
+
+Tests are located in the `__tests__/` directory:
+```
+__tests__/
+└── api/
+    └── validate-csv.test.js  # Tests for email validation logic
+```
+
+### Writing Tests
+
+- Tests use Jest framework
+- Mock DNS lookups for MX record validation
+- Test files should end with `.test.js`
+- Follow existing test patterns in `__tests__/api/`
+
 ## API Endpoint
 
 ### POST `/api/validate-csv`
