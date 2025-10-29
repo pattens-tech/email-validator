@@ -65,6 +65,19 @@ async function parseFormData(req) {
     });
 }
 
+// Sanitize email by removing dangerous characters
+function sanitizeEmail(email) {
+    if (!email || typeof email !== 'string') {
+        return '';
+    }
+    
+    // Remove dangerous characters: <, >, ", ', ;, backslashes, newlines, tabs
+    return email
+        .replace(/[<>"';\\]/g, '')
+        .replace(/[\r\n\t]/g, '')
+        .trim();
+}
+
 // Validate email format
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -87,9 +100,27 @@ async function checkMXRecords(domain) {
     return Promise.race([dnsPromise, timeoutPromise]);
 }
 
-// Extract domain from email
+// Extract domain from email with validation
 function getDomain(email) {
-    return email.split('@')[1];
+    if (!email || typeof email !== 'string') {
+        return null;
+    }
+    
+    const parts = email.split('@');
+    
+    // Must have exactly 2 parts (local@domain)
+    if (parts.length !== 2) {
+        return null;  // Missing @ or multiple @
+    }
+    
+    const domain = parts[1];
+    
+    // Domain must not be empty
+    if (!domain || domain.length === 0) {
+        return null;
+    }
+    
+    return domain;
 }
 
 // Process CSV and validate emails
@@ -98,7 +129,7 @@ async function processCSV(csvContent) {
     const emails = [];
     const seenEmails = new Set();
 
-    // Parse CSV and extract unique valid email addresses
+    // Parse CSV and extract unique email addresses (valid AND invalid)
     for (const line of lines) {
         const trimmed = line.trim();
 
@@ -107,14 +138,25 @@ async function processCSV(csvContent) {
             continue;
         }
 
-        // Check if it's a valid email format
-        if (isValidEmail(trimmed)) {
-            // Skip duplicates
-            if (!seenEmails.has(trimmed.toLowerCase())) {
-                emails.push(trimmed.toLowerCase());
-                seenEmails.add(trimmed.toLowerCase());
-            }
+        // Sanitize input to remove dangerous characters
+        const sanitized = sanitizeEmail(trimmed);
+        
+        // If sanitization results in empty string, skip
+        if (!sanitized) {
+            continue;
         }
+
+        const normalized = sanitized.toLowerCase();
+        
+        // Skip duplicates
+        if (seenEmails.has(normalized)) {
+            continue;
+        }
+        
+        // Add ALL sanitized emails (we'll validate format later)
+        // This ensures malformed emails are counted as invalid, not skipped
+        emails.push(normalized);
+        seenEmails.add(normalized);
     }
 
     return emails;
@@ -125,10 +167,27 @@ async function validateEmails(emails) {
     const maxEmails = 300;
     const emailsToValidate = emails.slice(0, maxEmails);
 
+    // Track emails with invalid format separately (using Set for O(1) lookup)
+    const invalidFormatEmails = new Set();
+    
     // Group emails by domain for efficient validation
     const domainMap = new Map();
+    
     for (const email of emailsToValidate) {
+        // Check if email has valid format
+        if (!isValidEmail(email)) {
+            invalidFormatEmails.add(email);
+            continue;
+        }
+        
         const domain = getDomain(email);
+        
+        // If domain extraction fails (null), treat as invalid format
+        if (!domain) {
+            invalidFormatEmails.add(email);
+            continue;
+        }
+        
         if (!domainMap.has(domain)) {
             domainMap.set(domain, []);
         }
@@ -146,18 +205,24 @@ async function validateEmails(emails) {
 
     // Count valid and invalid emails
     let validCount = 0;
-    let invalidCount = 0;
+    let invalidCount = invalidFormatEmails.size; // Start with invalid format count
 
+    // Count emails that passed format validation
     for (const email of emailsToValidate) {
+        // Skip emails already counted as invalid format (O(1) lookup with Set)
+        if (invalidFormatEmails.has(email)) {
+            continue;
+        }
+        
         const domain = getDomain(email);
         if (domainValidation.get(domain)) {
             validCount++;
         } else {
-            invalidCount++;
+            invalidCount++; // Valid format but no MX records
         }
     }
 
-    const total = emailsToValidate.length;
+    const total = validCount + invalidCount; // Total = all processed emails
     const percentage = total > 0 ? (validCount / total) * 100 : 0;
 
     return {
