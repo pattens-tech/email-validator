@@ -204,7 +204,7 @@
     }
     </script>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
+<body class="min-h-screen bg-slate-950 text-slate-100 antialiased flex flex-col">
     <!-- Background Effects -->
     <div class="fixed inset-0 overflow-hidden">
         <!-- Gradient Animation Background -->
@@ -248,7 +248,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="relative z-10 min-h-screen">
+    <main class="relative z-10 flex-1">
         <!-- Header -->
         <header class="flex items-center justify-between px-6 py-6 md:px-12">
             <img src="assets/pattens-white.svg" alt="Pattens Logo" width="200">             
@@ -303,7 +303,9 @@
                         <div class="spinner"></div>
                     </div>
                     <div class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl bg-slate-800/50">
-                        <p class="text-white text-xl text-center mb-4">Validating...</p>
+                        <p class="text-white text-xl text-center mb-4">
+                            Validating <span id="emailCountDisplay">your emails</span>...
+                        </p>
                         <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
                             <div id="progressBar" class="h-full bg-white transition-all duration-100" style="width: 0%"></div>
                         </div>
@@ -318,6 +320,20 @@
                     <div class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl text-center bg-slate-800/50">
                         <div id="resultPercentage" class="text-6xl font-bold text-white leading-none">87%</div>
                         <div class="text-slate-200/80 text-lg mt-2">Emails verified</div>
+                        <div class="mt-4 text-sm text-slate-300 space-y-1 bg-slate-900/30 rounded-lg p-4">
+                            <div class="flex justify-between">
+                                <span>✓ Valid emails:</span>
+                                <span id="validCount" class="font-semibold text-green-400">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>✗ Invalid emails:</span>
+                                <span id="invalidCount" class="font-semibold text-red-400">0</span>
+                            </div>
+                            <div class="flex justify-between border-t border-white/10 pt-2 mt-2">
+                                <span>Total processed:</span>
+                                <span id="totalCount" class="font-semibold text-white">0</span>
+                            </div>
+                        </div>
                         <button onclick="resetForm()" class="mt-6 px-8 py-3 rounded-xl bg-white/15 border border-white/30 text-white font-medium transition-all hover:bg-white/25 hover:border-white/50 cursor-pointer">Validate another file</button>
                     </div>
                 </div>
@@ -453,13 +469,15 @@ Any updates will appear on this page with a revised effective date.
             </div>
         </div>
     </main>
-   <footer class="border-t border-white/10 px-6 py-6 text-center text-slate-400/70 md:px-12">
-                <a href="https://pattens.tech" class="text-slate-300 transition hover:text-white">
-                    Powered by 
-                    <span class="underline">Pattens</span>
-                    : Built by AI
-                </a>
-            </footer>
+    
+    <!-- Footer -->
+    <footer class="relative z-10 mt-auto border-t border-white/10 px-6 py-6 text-center text-slate-400/70 md:px-12">
+        <a href="https://pattens.tech" class="text-slate-300 transition hover:text-white">
+            Powered by 
+            <span class="underline">Pattens</span>
+            : Built by AI
+        </a>
+    </footer>
     <!-- Stars Animation Script -->
     <script>
         const canvas = document.getElementById('starsCanvas');
@@ -608,6 +626,14 @@ Any updates will appear on this page with a revised effective date.
                 showSuccess(data);
             } catch (error) {
                 console.error('Error:', error);
+                
+                // Track errors with Vercel Analytics
+                if (window.va) {
+                    window.va('track', 'Validation Error', {
+                        error: error.message || 'Unknown error'
+                    });
+                }
+                
                 showError(error.message || 'Error, try again.');
             }
         }
@@ -617,7 +643,24 @@ Any updates will appear on this page with a revised effective date.
             loadingState.classList.remove('flex');
             successState.classList.remove('hidden');
             successState.classList.add('flex');
+            
+            // Update percentage
             document.getElementById('resultPercentage').textContent = Math.round(data.percentage) + '%';
+            
+            // Update detailed counts
+            document.getElementById('validCount').textContent = data.valid || 0;
+            document.getElementById('invalidCount').textContent = data.invalid || 0;
+            document.getElementById('totalCount').textContent = data.total || 0;
+            
+            // Track success with Vercel Analytics
+            if (window.va) {
+                window.va('track', 'Validation Success', {
+                    total: data.total,
+                    valid: data.valid,
+                    invalid: data.invalid,
+                    percentage: Math.round(data.percentage)
+                });
+            }
         }
 
         function showError(message) {
