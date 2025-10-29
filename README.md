@@ -80,16 +80,29 @@ test@example.com
 - One email per line
 - Max 300 emails per upload
 - Empty lines are skipped
-- Invalid formats are skipped
+- Malformed emails are counted as invalid (not skipped)
 - Duplicates are automatically removed
 
 ## Validation Logic
 
-- **Valid**: Domain has MX records (can receive email)
-- **Invalid**: Domain has no MX records (cannot receive email)
-- **Skipped**: Empty lines, invalid email formats, duplicates
+### Email Processing (Stage 3: Input Sanitization)
 
-**Score Calculation**: `(valid emails / total valid email rows) × 100`
+**Input Sanitization**:
+- Removes dangerous characters (`<`, `>`, `"`, `'`, `;`, `\`) to prevent injection attacks
+- Removes newlines, tabs, and carriage returns
+- Trims whitespace
+
+**Validation**:
+- **Valid**: Valid email format AND domain has MX records (can receive email)
+- **Invalid**: Malformed format (missing @, multiple @, empty domain) OR valid format but no MX records
+- **Skipped**: Empty lines and duplicates only
+
+**Counting Behavior** (Stage 3):
+- All processed emails are counted: `total = valid + invalid`
+- Malformed emails are counted as invalid, not skipped
+- This ensures accurate reporting of email quality
+
+**Score Calculation**: `(valid emails / total emails) × 100`
 
 ## Deployment
 
@@ -150,6 +163,23 @@ __tests__/
     └── validate-csv.test.js  # Tests for email validation logic
 ```
 
+### Test Files
+
+Sample CSV files for testing:
+- `test-emails.csv` - Valid email addresses for testing
+- `bad-test-emails.csv` - Malformed emails for testing Stage 3 sanitization
+
+### Test Coverage
+
+**30 tests covering**:
+- Email format validation
+- Domain extraction with edge cases
+- MX record checking
+- CSV processing with sanitization
+- File size validation (Stage 1)
+- Input sanitization (Stage 3)
+- Malformed email counting (Stage 3)
+
 ### Writing Tests
 
 - Tests use Jest framework
@@ -195,6 +225,24 @@ __tests__/
 - **Load Time**: < 1s on 3G
 - **Validation Time**: 30-60 seconds for 300 emails
 - **No Dependencies**: Uses CDN for Tailwind CSS
+
+## Security Features (Stage 3: Input Sanitization)
+
+### Input Sanitization
+- **XSS Prevention**: Removes `<` and `>` characters
+- **SQL Injection Prevention**: Removes quotes and semicolons
+- **Command Injection Prevention**: Removes backslashes
+- **CRLF Injection Prevention**: Removes `\r` and `\n` characters
+
+### Robust Error Handling
+- No crashes on malformed input (missing @, multiple @, empty domains)
+- Graceful handling of edge cases
+- All emails properly counted for accurate reporting
+
+### File Size Protection
+- Maximum file size: 5MB
+- Prevents memory exhaustion attacks
+- Clear error messages (413 status for oversized files)
 
 ## Limitations
 
