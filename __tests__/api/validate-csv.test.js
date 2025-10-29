@@ -375,6 +375,156 @@ describe('Email Validator API', () => {
     });
   });
 
+  describe('Security headers', () => {
+    const handler = require('../../api/validate-csv');
+    const { Readable } = require('stream');
+
+    // Helper to create a mock request
+    const createMockRequest = (method = 'OPTIONS', fileContent = '', filename = 'test.csv') => {
+      if (method === 'OPTIONS') {
+        return {
+          method: 'OPTIONS',
+          headers: {}
+        };
+      }
+
+      const boundary = '----WebKitFormBoundary7MA4YWxkTrZu0gW';
+      const contentType = `multipart/form-data; boundary=${boundary}`;
+      
+      const parts = [
+        `--${boundary}`,
+        `Content-Disposition: form-data; name="file"; filename="${filename}"`,
+        'Content-Type: text/csv',
+        '',
+        fileContent,
+        `--${boundary}--`
+      ];
+      
+      const body = parts.join('\r\n');
+      const stream = Readable.from([body]);
+      
+      return Object.assign(stream, {
+        method,
+        headers: {
+          'content-type': contentType
+        }
+      });
+    };
+
+    // Helper to create a mock response
+    const createMockResponse = () => {
+      const res = {
+        statusCode: 200,
+        headers: {},
+        body: null,
+        setHeader: jest.fn((key, value) => {
+          res.headers[key] = value;
+        }),
+        status: jest.fn((code) => {
+          res.statusCode = code;
+          return res;
+        }),
+        json: jest.fn((data) => {
+          res.body = data;
+          return res;
+        }),
+        end: jest.fn()
+      };
+      return res;
+    };
+
+    // Helper to verify all security headers are present
+    const verifySecurityHeaders = (res) => {
+      expect(res.headers['X-Content-Type-Options']).toBe('nosniff');
+      expect(res.headers['X-Frame-Options']).toBe('DENY');
+      expect(res.headers['X-XSS-Protection']).toBe('1; mode=block');
+      expect(res.headers['Referrer-Policy']).toBe('strict-origin-when-cross-origin');
+      expect(res.headers['Content-Security-Policy']).toBe("default-src 'none'; frame-ancestors 'none'");
+    };
+
+    test('should include security headers in OPTIONS preflight response', async () => {
+      const req = createMockRequest('OPTIONS');
+      const res = createMockResponse();
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(200);
+      verifySecurityHeaders(res);
+    });
+
+    test('should include security headers in successful POST response (200)', async () => {
+      const emails = 'test1@example.com\ntest2@example.com\ntest3@example.com';
+      const req = createMockRequest('POST', emails);
+      const res = createMockResponse();
+
+      dns.resolveMx.mockResolvedValue([{ exchange: 'mail.example.com', priority: 10 }]);
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(200);
+      verifySecurityHeaders(res);
+    });
+
+    test('should include security headers in bad request response (400)', async () => {
+      // File with more than 300 emails should trigger 400 error
+      const emails = Array(301).fill(0).map((_, i) => `test${i}@example.com`).join('\n');
+      const req = createMockRequest('POST', emails);
+      const res = createMockResponse();
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(400);
+      verifySecurityHeaders(res);
+    });
+
+    test('should include security headers in file too large response (413)', async () => {
+      // Create a file larger than 5MB
+      const maxSize = 5 * 1024 * 1024;
+      const email = 'test@example.com\n';
+      const padding = 'x'.repeat(1024);
+      const line = email + padding + '\n';
+      const numLines = Math.ceil(maxSize / line.length) + 10;
+      const largeContent = Array(numLines).fill(line).join('');
+      
+      const req = createMockRequest('POST', largeContent);
+      const res = createMockResponse();
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(413);
+      verifySecurityHeaders(res);
+    });
+
+    test('should include security headers in method not allowed response (405)', async () => {
+      const req = {
+        method: 'GET',
+        headers: {}
+      };
+      const res = createMockResponse();
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(405);
+      verifySecurityHeaders(res);
+    });
+
+    test('should include CORS headers along with security headers', async () => {
+      const req = createMockRequest('OPTIONS');
+      const res = createMockResponse();
+
+      await handler(req, res);
+
+      // Verify CORS headers are still present
+      expect(res.headers['Access-Control-Allow-Origin']).toBe('*');
+      expect(res.headers['Access-Control-Allow-Methods']).toBe('POST, OPTIONS');
+      expect(res.headers['Access-Control-Allow-Headers']).toBe('Content-Type');
+      expect(res.headers['Content-Type']).toBe('application/json');
+      
+      // Verify security headers are also present
+      verifySecurityHeaders(res);
+    });
+  });
+
   describe('Stage 3: Input Sanitization', () => {
     describe('sanitizeEmail function', () => {
       test('should remove dangerous characters', () => {
