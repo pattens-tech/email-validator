@@ -136,4 +136,130 @@ describe('Email Validator API', () => {
       expect(emails).toContain('valid@email.com');
     });
   });
+
+  describe('File size validation', () => {
+    const handler = require('../../api/validate-csv');
+    const { Readable } = require('stream');
+
+    // Helper to create a mock request with file upload
+    const createMockRequest = (fileContent, filename = 'test.csv') => {
+      const boundary = '----WebKitFormBoundary7MA4YWxkTrZu0gW';
+      const contentType = `multipart/form-data; boundary=${boundary}`;
+      
+      // Create multipart form data
+      const parts = [
+        `--${boundary}`,
+        `Content-Disposition: form-data; name="file"; filename="${filename}"`,
+        'Content-Type: text/csv',
+        '',
+        fileContent,
+        `--${boundary}--`
+      ];
+      
+      const body = parts.join('\r\n');
+      const stream = Readable.from([body]);
+      
+      return Object.assign(stream, {
+        method: 'POST',
+        headers: {
+          'content-type': contentType
+        }
+      });
+    };
+
+    // Helper to create a mock response
+    const createMockResponse = () => {
+      const res = {
+        statusCode: 200,
+        headers: {},
+        body: null,
+        setHeader: jest.fn((key, value) => {
+          res.headers[key] = value;
+        }),
+        status: jest.fn((code) => {
+          res.statusCode = code;
+          return res;
+        }),
+        json: jest.fn((data) => {
+          res.body = data;
+          return res;
+        }),
+        end: jest.fn()
+      };
+      return res;
+    };
+
+    test('should accept small valid file under 1MB', async () => {
+      // Create a small file with valid emails
+      const emails = Array(100).fill(0).map((_, i) => `test${i}@example.com`).join('\n');
+      const req = createMockRequest(emails);
+      const res = createMockResponse();
+
+      dns.resolveMx.mockResolvedValue([{ exchange: 'mail.example.com', priority: 10 }]);
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty('total');
+      expect(res.body).toHaveProperty('valid');
+      expect(res.body).toHaveProperty('invalid');
+    });
+
+    test('should reject large file over 5MB with 413 status', async () => {
+      // Create a file larger than 5MB (5 * 1024 * 1024 bytes)
+      // Use padding to make it large without many emails to avoid 300 email limit
+      const maxSize = 5 * 1024 * 1024;
+      const email = 'test@example.com\n';
+      const padding = 'x'.repeat(1024); // 1KB of padding per line
+      const line = email + padding + '\n';
+      const numLines = Math.ceil(maxSize / line.length) + 10; // Ensure > 5MB
+      const largeContent = Array(numLines).fill(line).join('');
+      
+      const req = createMockRequest(largeContent);
+      const res = createMockResponse();
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(413);
+      expect(res.body).toHaveProperty('error');
+      expect(res.body.error).toBe('File too large. Maximum size is 5MB');
+    });
+
+    test('should accept file at exactly 5MB limit', async () => {
+      // Create a file at approximately 5MB
+      const maxSize = 5 * 1024 * 1024;
+      const lineSize = 30;
+      const numLines = Math.floor(maxSize / lineSize) - 100; // Slightly under to account for line breaks
+      const content = Array(numLines).fill(0).map((_, i) => `test${i}@example.com`).join('\n');
+      
+      const req = createMockRequest(content);
+      const res = createMockResponse();
+
+      dns.resolveMx.mockResolvedValue([{ exchange: 'mail.example.com', priority: 10 }]);
+
+      await handler(req, res);
+
+      // Should succeed (200) or hit email limit (400), but not file size error (413)
+      expect(res.statusCode).not.toBe(413);
+    });
+
+    test('should handle file size check with multiple chunks', async () => {
+      // This test verifies that file size is tracked across multiple data chunks
+      // The busboy library will handle chunking internally
+      const maxSize = 5 * 1024 * 1024;
+      const email = 'test@example.com\n';
+      const padding = 'x'.repeat(1024); // 1KB of padding per line
+      const line = email + padding + '\n';
+      const numLines = Math.ceil(maxSize / line.length) + 10; // Ensure > 5MB
+      const largeContent = Array(numLines).fill(line).join('');
+      
+      const req = createMockRequest(largeContent);
+      const res = createMockResponse();
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(413);
+      expect(res.body.error).toBe('File too large. Maximum size is 5MB');
+    });
+  });
 });
