@@ -2,7 +2,7 @@
 name: Agent
 description:
 
-# Development Guidelines
+Development Guidelines
 
 ## Philosophy
 
