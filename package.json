@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "@vercel/analytics": "^1.1.1",
-    "busboy": "^1.6.0"
+    "busboy": "^1.6.0",
+    "stripe": "^17.5.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
