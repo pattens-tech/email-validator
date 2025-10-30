@@ -49,6 +49,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+
     <style>
         :root {
             --gradient-background-start: #0f172a;
@@ -471,6 +474,41 @@ Any updates will appear on this page with a revised effective date.
                 </div>
             </div>
         </div>
+
+        <!-- Payment Modal -->
+        <div id="paymentModal" class="modal fixed inset-0 z-[9999] overflow-hidden hidden" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+            <div class="modal-overlay absolute inset-0 bg-black/85 backdrop-blur"></div>
+            <div class="modal-container relative w-full h-full flex items-center justify-center p-4">
+                <div class="modal-content relative rounded-2xl border border-white/10 max-w-md w-full overflow-hidden shadow-2xl backdrop-blur" style="background: linear-gradient(135deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);">
+                    <div class="flex items-center justify-between p-6 border-b border-white/10">
+                        <h2 id="paymentModalTitle" class="text-2xl font-semibold text-white">Unlock Full Report</h2>
+                        <button id="closePaymentModal" class="flex items-center justify-center w-10 h-10 rounded-lg bg-transparent border border-white/20 text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white" aria-label="Close payment modal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-300 mb-6">Get access to the full detailed report with all email addresses and their validation status, plus CSV download.</p>
+                        
+                        <!-- Loading state -->
+                        <div id="paymentLoading" class="hidden text-center py-8">
+                            <div class="inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+                            <p class="text-white mt-4">Preparing checkout...</p>
+                        </div>
+                        
+                        <!-- Express Checkout Element container -->
+                        <div id="expressCheckoutElement" class="mb-4"></div>
+                        
+                        <!-- Error message -->
+                        <div id="paymentError" class="hidden text-red-400 text-sm p-3 bg-red-900/20 border border-red-500/30 rounded-lg mb-4"></div>
+                        
+                        <p class="text-xs text-slate-400 text-center">Secure payment powered by Stripe</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
     
     <!-- Footer -->
@@ -691,10 +729,108 @@ Any updates will appear on this page with a revised effective date.
             sessionStorage.removeItem('validationResults');
         }
 
-        // Placeholder for payment modal function (will be implemented in Stage 4)
-        function openPaymentModal() {
-            alert('Payment modal will be implemented in the next stage');
+    </script>
+
+    <!-- Payment Integration Script -->
+    <script>
+        // Initialize Stripe
+        const stripe = Stripe('pk_test_51SNjUMCmTraQU9pzceHJC3Tx61bc1dUt6pfa3HiLsJgneB78gaPXmSX2Gq00YXf2NtuQFvCGsyP36jKqlWKvlPLl00tXTmiXPO');
+        
+        const paymentModal = document.getElementById('paymentModal');
+        const closePaymentModalBtn = document.getElementById('closePaymentModal');
+        const paymentLoading = document.getElementById('paymentLoading');
+        const paymentError = document.getElementById('paymentError');
+        const expressCheckoutElement = document.getElementById('expressCheckoutElement');
+
+        async function openPaymentModal() {
+            // Get stored validation results
+            const resultsJson = sessionStorage.getItem('validationResults');
+            if (!resultsJson) {
+                alert('No validation results found. Please validate emails first.');
+                return;
+            }
+
+            let emails;
+            try {
+                emails = JSON.parse(resultsJson);
+            } catch (e) {
+                alert('Error loading validation results. Please try again.');
+                return;
+            }
+
+            // Show modal and loading state
+            paymentModal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            paymentLoading.classList.remove('hidden');
+            paymentError.classList.add('hidden');
+            expressCheckoutElement.innerHTML = '';
+
+            try {
+                // Create checkout session
+                const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ emails }),
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to create checkout session');
+                }
+
+                const { sessionId, url } = await response.json();
+
+                // Hide loading
+                paymentLoading.classList.add('hidden');
+
+                // Initialize Express Checkout Element
+                const options = {
+                    clientSecret: sessionId,
+                };
+
+                // For now, redirect to Stripe Checkout URL directly
+                // Express Checkout Element requires client secret from Payment Intent, not Checkout Session
+                // We'll use standard Checkout redirect instead
+                window.location.href = url;
+
+            } catch (error) {
+                console.error('Payment error:', error);
+                paymentLoading.classList.add('hidden');
+                paymentError.textContent = error.message || 'An error occurred. Please try again.';
+                paymentError.classList.remove('hidden');
+
+                // Track error with Vercel Analytics
+                if (window.va) {
+                    window.va('track', 'Payment Error', {
+                        error: error.message || 'Unknown error'
+                    });
+                }
+            }
         }
+
+        function closePaymentModal() {
+            paymentModal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+            paymentError.classList.add('hidden');
+            expressCheckoutElement.innerHTML = '';
+        }
+
+        closePaymentModalBtn.addEventListener('click', closePaymentModal);
+
+        // Close modal on overlay click
+        paymentModal.querySelector('.modal-overlay').addEventListener('click', closePaymentModal);
+
+        // Prevent modal content clicks from closing modal
+        paymentModal.querySelector('.modal-content').addEventListener('click', (e) => e.stopPropagation());
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !paymentModal.classList.contains('hidden')) {
+                closePaymentModal();
+            }
+        });
     </script>
 
     <!-- Modal Script -->
