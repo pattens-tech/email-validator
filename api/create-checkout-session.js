@@ -1,7 +1,7 @@
 const Stripe = require('stripe');
 
 // Initialize Stripe with secret key from environment variable
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.sk_test_51SNjUMCmTraQU9pzvX0oCkdah2Zn5ImLpcPhTRk5lRrZ0PRXDTPJnbZrloayGPwvI1AGjpmKhlopWe3cCANfe6M400zw0I5yH7);
 
 // Constants
 const PRODUCT_ID = 'prod_TKOJcY2oaB32Ja';
