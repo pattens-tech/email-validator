@@ -159,8 +159,13 @@ npm run test:coverage
 Tests are located in the `__tests__/` directory:
 ```
 __tests__/
-└── api/
-    └── validate-csv.test.js  # Tests for email validation logic
+├── api/
+│   ├── validate-csv.test.js              # Email validation logic tests
+│   └── create-checkout-session.test.js   # Stripe checkout tests
+├── integration/
+│   └── stripe-transaction-simulation.test.js  # Stripe transaction simulation tests
+└── helpers/
+    └── stripe-test-helpers.js            # Stripe test utilities
 ```
 
 ### Test Files
@@ -171,7 +176,7 @@ Sample CSV files for testing:
 
 ### Test Coverage
 
-**30 tests covering**:
+**73 tests covering**:
 - Email format validation
 - Domain extraction with edge cases
 - MX record checking
@@ -179,13 +184,22 @@ Sample CSV files for testing:
 - File size validation (Stage 1)
 - Input sanitization (Stage 3)
 - Malformed email counting (Stage 3)
+- Stripe checkout session creation
+- Stripe transaction simulation (success and failure scenarios)
+- Payment error handling
+
+### Stripe Testing
+
+For detailed information on testing Stripe payment integration, including test card numbers and transaction simulation, see **[STRIPE_TESTING.md](STRIPE_TESTING.md)**.
 
 ### Writing Tests
 
 - Tests use Jest framework
 - Mock DNS lookups for MX record validation
+- Mock Stripe API calls for payment testing
 - Test files should end with `.test.js`
 - Follow existing test patterns in `__tests__/api/`
+- Use test helpers from `__tests__/helpers/` for common test utilities
 
 ## API Endpoint
 

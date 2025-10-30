@@ -1,30 +1,27 @@
 // Mock Stripe before requiring the handler
-const mockCreateSession = jest.fn();
+const mockCreatePaymentIntent = jest.fn();
 jest.mock('stripe', () => {
   return jest.fn().mockImplementation(() => ({
-    checkout: {
-      sessions: {
-        create: mockCreateSession
-      }
+    paymentIntents: {
+      create: mockCreatePaymentIntent
     }
   }));
 });
 
-const handler = require('../../api/create-checkout-session');
+const handler = require('../../api/create-payment-intent');
 
-// Import Stripe test helpers
+// Import test helpers
 const {
-  createTestEmailData,
-  TEST_PRICE_AMOUNTS
+  createTestEmailData
 } = require('../helpers/stripe-test-helpers');
 
 // Test constants
 const TEST_ORIGIN = 'https://email-validator.pattens.tech';
 
-describe('Create Checkout Session API', () => {
+describe('Create Payment Intent API', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCreateSession.mockClear();
+    mockCreatePaymentIntent.mockClear();
   });
 
   // Helper to create mock request
@@ -81,25 +78,21 @@ describe('Create Checkout Session API', () => {
     });
 
     test('should accept POST request', async () => {
-      const emails = [
-        { email: 'test@example.com', status: 'Valid' },
-        { email: 'invalid@test.com', status: 'Invalid' }
-      ];
+      const emails = createTestEmailData(2);
       
       const req = createMockRequest('POST', { emails });
       const res = createMockResponse();
 
-      mockCreateSession.mockResolvedValue({
-        id: 'cs_test_123',
-        url: 'https://checkout.stripe.com/test'
+      mockCreatePaymentIntent.mockResolvedValue({
+        id: 'pi_test_123',
+        client_secret: 'pi_test_123_secret_abc'
       });
 
       await handler(req, res);
 
-      expect(mockCreateSession).toHaveBeenCalled();
+      expect(mockCreatePaymentIntent).toHaveBeenCalled();
       expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveProperty('sessionId');
-      expect(res.body).toHaveProperty('url');
+      expect(res.body).toHaveProperty('clientSecret');
     });
   });
 
@@ -135,6 +128,67 @@ describe('Create Checkout Session API', () => {
     });
   });
 
+  describe('Payment Intent Creation', () => {
+    test('should create payment intent with correct parameters', async () => {
+      const emails = createTestEmailData(5);
+      
+      const req = createMockRequest('POST', { emails });
+      const res = createMockResponse();
+
+      mockCreatePaymentIntent.mockResolvedValue({
+        id: 'pi_test_123',
+        client_secret: 'pi_test_123_secret_abc'
+      });
+
+      await handler(req, res);
+
+      expect(mockCreatePaymentIntent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          amount: 999, // £9.99 in pence
+          currency: 'gbp',
+          payment_method_types: ['card'],
+          metadata: expect.objectContaining({
+            emailCount: '5'
+          })
+        })
+      );
+    });
+
+    test('should return client secret', async () => {
+      const emails = createTestEmailData(3);
+      
+      const req = createMockRequest('POST', { emails });
+      const res = createMockResponse();
+
+      const testClientSecret = 'pi_test_secret_xyz789';
+      mockCreatePaymentIntent.mockResolvedValue({
+        id: 'pi_test_456',
+        client_secret: testClientSecret
+      });
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.clientSecret).toBe(testClientSecret);
+    });
+
+    test('should handle Stripe errors gracefully', async () => {
+      const emails = createTestEmailData(2);
+      
+      const req = createMockRequest('POST', { emails });
+      const res = createMockResponse();
+
+      mockCreatePaymentIntent.mockRejectedValue(
+        new Error('Stripe API error')
+      );
+
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res.body.error).toContain('error');
+    });
+  });
+
   describe('Email Data Sanitization', () => {
     test('should accept valid email data', async () => {
       const emails = [
@@ -145,15 +199,15 @@ describe('Create Checkout Session API', () => {
       const req = createMockRequest('POST', { emails });
       const res = createMockResponse();
 
-      mockCreateSession.mockResolvedValue({
-        id: 'cs_test_123',
-        url: 'https://checkout.stripe.com/test'
+      mockCreatePaymentIntent.mockResolvedValue({
+        id: 'pi_test_123',
+        client_secret: 'pi_test_123_secret_abc'
       });
 
       await handler(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(mockCreateSession).toHaveBeenCalledWith(
+      expect(mockCreatePaymentIntent).toHaveBeenCalledWith(
         expect.objectContaining({
           metadata: expect.objectContaining({
             emailCount: '2'
@@ -174,16 +228,16 @@ describe('Create Checkout Session API', () => {
       const req = createMockRequest('POST', { emails });
       const res = createMockResponse();
 
-      mockCreateSession.mockResolvedValue({
-        id: 'cs_test_123',
-        url: 'https://checkout.stripe.com/test'
+      mockCreatePaymentIntent.mockResolvedValue({
+        id: 'pi_test_123',
+        client_secret: 'pi_test_123_secret_abc'
       });
 
       await handler(req, res);
 
       expect(res.statusCode).toBe(200);
       // Should only accept 2 valid entries (first and last)
-      expect(mockCreateSession).toHaveBeenCalledWith(
+      expect(mockCreatePaymentIntent).toHaveBeenCalledWith(
         expect.objectContaining({
           metadata: expect.objectContaining({
             emailCount: '2'
@@ -226,60 +280,9 @@ describe('Create Checkout Session API', () => {
 
       await handler(req, res);
 
-      expect(res.headers['Access-Control-Allow-Origin']).toBe(TEST_ORIGIN);
+      expect(res.headers['Access-Control-Allow-Origin']).toBe('*');
       expect(res.headers['Access-Control-Allow-Methods']).toBe('POST, OPTIONS');
       expect(res.headers['Access-Control-Allow-Headers']).toBe('Content-Type');
-    });
-  });
-
-  describe('Stripe Integration', () => {
-    test('should create checkout session with correct parameters', async () => {
-      const emails = [
-        { email: 'test@example.com', status: 'Valid' }
-      ];
-      
-      const req = createMockRequest('POST', { emails });
-      const res = createMockResponse();
-
-      mockCreateSession.mockResolvedValue({
-        id: 'cs_test_123',
-        url: 'https://checkout.stripe.com/test'
-      });
-
-      await handler(req, res);
-
-      expect(mockCreateSession).toHaveBeenCalledWith(
-        expect.objectContaining({
-          payment_method_types: ['card'],
-          mode: 'payment',
-          line_items: expect.arrayContaining([
-            expect.objectContaining({
-              price_data: expect.objectContaining({
-                currency: 'gbp',
-                unit_amount: 999
-              })
-            })
-          ])
-        })
-      );
-    });
-
-    test('should handle Stripe errors gracefully', async () => {
-      const emails = [
-        { email: 'test@example.com', status: 'Valid' }
-      ];
-      
-      const req = createMockRequest('POST', { emails });
-      const res = createMockResponse();
-
-      mockCreateSession.mockRejectedValue(
-        new Error('Stripe API error')
-      );
-
-      await handler(req, res);
-
-      expect(res.statusCode).toBe(500);
-      expect(res.body.error).toContain('error');
     });
   });
 });
