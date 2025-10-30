@@ -110,6 +110,14 @@ module.exports = async (req, res) => {
 
     } catch (error) {
         console.error('Stripe error:', error);
+        
+        // Handle Stripe card errors with 400 status
+        if (error.type === 'StripeCardError') {
+            return res.status(400).json({ 
+                error: error.message || 'Card error'
+            });
+        }
+        
         return res.status(500).json({ 
             error: error.message || 'Failed to create checkout session'
         });
