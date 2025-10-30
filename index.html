@@ -965,7 +965,7 @@ Any updates will appear on this page with a revised effective date.
         viewReportBtn.addEventListener('click', () => {
             closePaymentModal();
             // Trigger showing detailed results
-            showDetailedResults();
+            showDetailedReport(JSON.parse(sessionStorage.getItem('validationResults')));
         });
 
         function closePaymentModal() {
