@@ -41,12 +41,27 @@ jest.mock('stripe', () => {
 const validateCsvHandler = require('../../api/validate-csv');
 const createCheckoutSessionHandler = require('../../api/create-checkout-session');
 
+// Test constants
+const VALID_TEST_DOMAINS = [
+  'microsoft.com', 'google.com', 'apple.com', 'amazon.com',
+  'salesforce.com', 'oracle.com', 'ibm.com', 'adobe.com',
+  'cisco.com', 'netflix.com'
+];
+
 describe('Upload and Purchase Integration Test', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCreateSession.mockClear();
     dns.resolveMx.mockClear();
   });
+
+  // Helper to convert validation results to checkout format
+  const convertToCheckoutFormat = (validatedEmails) => {
+    return validatedEmails.map(result => ({
+      email: result.email,
+      status: result.valid ? 'Valid' : 'Invalid'
+    }));
+  };
 
   // Helper to create mock request for file upload
   const createFileUploadRequest = (fileContent) => {
@@ -119,13 +134,7 @@ describe('Upload and Purchase Integration Test', () => {
 
     // Mock DNS responses - first 10 are real companies (valid MX), rest are fake (invalid)
     dns.resolveMx.mockImplementation((domain) => {
-      const validDomains = [
-        'microsoft.com', 'google.com', 'apple.com', 'amazon.com',
-        'salesforce.com', 'oracle.com', 'ibm.com', 'adobe.com',
-        'cisco.com', 'netflix.com'
-      ];
-      
-      if (validDomains.includes(domain)) {
+      if (VALID_TEST_DOMAINS.includes(domain)) {
         return Promise.resolve([{ exchange: `mail.${domain}`, priority: 10 }]);
       }
       return Promise.reject({ code: 'ENOTFOUND' });
@@ -161,10 +170,7 @@ describe('Upload and Purchase Integration Test', () => {
     const validatedEmails = uploadRes.body.emails || [];
     
     // Convert to format expected by checkout session
-    const checkoutEmails = validatedEmails.slice(0, 20).map(result => ({
-      email: result.email,
-      status: result.valid ? 'Valid' : 'Invalid'
-    }));
+    const checkoutEmails = convertToCheckoutFormat(validatedEmails);
 
     expect(checkoutEmails.length).toBeGreaterThan(0);
 
@@ -233,10 +239,7 @@ describe('Upload and Purchase Integration Test', () => {
 
     // Prepare email data for purchase
     const validatedEmails = uploadRes.body.emails || [];
-    const checkoutEmails = validatedEmails.slice(0, 20).map(result => ({
-      email: result.email,
-      status: result.valid ? 'Valid' : 'Invalid'
-    }));
+    const checkoutEmails = convertToCheckoutFormat(validatedEmails);
 
     // Simulate successful Visa payment using test card from Stripe documentation
     // Card number: 4242 4242 4242 4242 (from https://docs.stripe.com/testing)
@@ -303,8 +306,8 @@ describe('Upload and Purchase Integration Test', () => {
 
     // Mock mixed DNS results (some valid, some invalid)
     dns.resolveMx.mockImplementation((domain) => {
-      // Simulate that major company domains are valid
-      const validDomains = ['microsoft.com', 'google.com', 'apple.com', 'amazon.com'];
+      // Simulate that major company domains are valid (use first 4 for this test)
+      const validDomains = VALID_TEST_DOMAINS.slice(0, 4);
       if (validDomains.includes(domain)) {
         return Promise.resolve([{ exchange: `mail.${domain}`, priority: 10 }]);
       }
@@ -321,10 +324,7 @@ describe('Upload and Purchase Integration Test', () => {
 
     // Step 2: Prepare checkout data
     const validatedEmails = uploadRes.body.emails || [];
-    const checkoutEmails = validatedEmails.map(result => ({
-      email: result.email,
-      status: result.valid ? 'Valid' : 'Invalid'
-    }));
+    const checkoutEmails = convertToCheckoutFormat(validatedEmails);
 
     // Step 3: Create checkout session
     mockCreateSession.mockResolvedValue({
