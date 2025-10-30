@@ -160,7 +160,7 @@ The application uses a **fully integrated** payment solution where:
 
 ```javascript
 // 1. Initialize Stripe with publishable key
-const stripe = Stripe('pk_test_...');
+const stripe = Stripe('pk_test_51ABCxyz123...');
 
 // 2. When payment modal opens, create Payment Intent
 async function openPaymentModal() {
@@ -420,17 +420,17 @@ email-validator/
 
 ```bash
 # Vercel Environment Variables
-STRIPE_SECRET_KEY=sk_test_...   # Server-side secret key
+STRIPE_SECRET_KEY=sk_test_51ABCxyz123...   # Server-side secret key (must be kept secret)
 ```
 
 ### Frontend (Public)
 
 ```javascript
 // In index.html (line 790)
-const stripe = Stripe('pk_test_...');  // Client-side publishable key
+const stripe = Stripe('pk_test_51ABCxyz123...');  // Client-side publishable key (format: pk_test_51...)
 ```
 
-**Security Note**: The publishable key (`pk_test_...`) is safe to expose in client-side code. The secret key (`sk_test_...`) must never be exposed and should only exist in environment variables.
+**Security Note**: The publishable key (`pk_test_51...` or `pk_live_51...`) is safe to expose in client-side code. The secret key (`sk_test_51...` or `sk_live_51...`) must never be exposed and should only exist in environment variables.
 
 ## Monitoring and Analytics
 
