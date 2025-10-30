@@ -823,7 +823,7 @@ Any updates will appear on this page with a revised effective date.
             // The validation API returns detailed status codes, but the payment API expects 'Valid' or 'Invalid'
             const transformedEmails = emails.map(item => ({
                 email: item.email,
-                status: item.valid ? 'Valid' : 'Invalid'
+                status: item.valid === true || item.status === 'Valid' ? 'Valid' : 'Invalid'
             }));
 
             // Show modal and loading state

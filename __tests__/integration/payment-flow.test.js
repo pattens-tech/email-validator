@@ -35,10 +35,9 @@ describe('Payment Flow Integration', () => {
     method,
     body,
     headers: {
-      'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary',
+      'content-type': 'application/json',
       ...headers
-    },
-    pipe: jest.fn()
+    }
   });
 
   // Helper to create mock response
