@@ -38,7 +38,6 @@ const STRIPE_TEST_CARDS = {
   // Additional test scenarios
   ALWAYS_INCOMPLETE: '4000000000006975', // Card payments succeed but the charge remains pending
   ALWAYS_DECLINE_CHARGE: '4000000000000341', // Charge succeeds but is declined when captured
-  DECLINE_CHARGE_INSUFFICIENT_FUNDS: '4000000000009987', // Charge declined when captured - insufficient funds
 };
 
 /**
