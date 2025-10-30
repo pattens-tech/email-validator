@@ -102,7 +102,8 @@ The validator performs comprehensive email validation using a multi-stage proces
 **Counting Behavior**:
 - All processed emails are counted: `total = valid + invalid`
 - Malformed emails are counted as invalid, not skipped
-- Empty lines and duplicates are skipped (not counted)
+- Empty lines and duplicates are filtered during parsing (not counted in any category)
+- Maximum 300 emails per upload; files with more than 300 emails are rejected with 400 error
 - This ensures accurate reporting of email quality
 
 **Score Calculation**: `(valid emails / total emails) × 100`
@@ -285,12 +286,14 @@ For detailed information on testing Stripe payment integration, including test c
 - `valid`: Number of emails that passed validation
 - `invalid`: Number of emails that failed validation
 - `percentage`: Percentage of valid emails (valid/total × 100)
-- `skipped`: Number of emails skipped (duplicates, empty lines)
+- `skipped`: Number of emails skipped (always 0, as files with >300 emails are rejected)
 - `emails`: Array of individual email results with detailed status codes
 
 **Error Responses:**
 - `400`: Invalid file format or no emails found
+- `400`: File contains more than 300 emails (entire request rejected)
 - `413`: File exceeds 5MB size limit
+- `405`: Method not allowed (only POST and OPTIONS are supported)
 - `500`: Server error
 
 ## Browser Support
