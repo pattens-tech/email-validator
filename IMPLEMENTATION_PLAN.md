@@ -1,112 +1,75 @@
-# Security Implementation Plan
+# Domain Update & Bug Fix Implementation Plan
 
 ## Overview
-Implementing comprehensive security improvements to protect against file size attacks, DNS timeouts, injection attacks, DoS, and security vulnerabilities.
+Fix critical bugs and ensure consistent use of canonical domain: `https://email-validator.pattens.tech`
 
 ---
 
-## Stage 1: File Size Protection
-**Goal**: Add file size limits to prevent memory exhaustion attacks
+## Stage 1: Fix Stripe URL Pattern Bug
+**Goal**: Fix "The string did not match the expected pattern" error on Stripe checkout
 **Success Criteria**: 
-- Files over 5MB are rejected before processing
-- Memory usage stays bounded during upload
-- Clear error message for oversized files (413 status)
-**Tests**:
-- Upload 1MB file (should succeed)
-- Upload 6MB file (should fail with 413 status)
-- Verify memory doesn't accumulate during rejection
-**Status**: Complete
-**Files Changed**: `api/validate-csv.js` (parseFormData function)
-**Estimated Complexity**: Low
-
----
-
-## Stage 2: DNS Timeout Protection
-**Goal**: Add timeouts to DNS lookups to prevent hanging requests
-**Success Criteria**:
-- DNS queries timeout after 5 seconds
-- Timeout treated as validation failure, not error
-- Multiple concurrent timeouts don't block other requests
-**Tests**:
-- Mock DNS server that never responds
-- Verify 5-second timeout triggers
-- Test 100+ concurrent validations with timeouts
-**Status**: Complete
-**Files Changed**: `api/validate-csv.js` (checkMXRecords function)
-**Estimated Complexity**: Medium
-**Dependencies**: None
-
----
-
-## Stage 3: Input Sanitization
-**Goal**: Sanitize email inputs to prevent injection and handle edge cases
-**Success Criteria**:
-- Email addresses are sanitized before processing
-- Malformed emails handled gracefully
-- Domain extraction validates @ symbol exists
-- All emails counted (valid + invalid = total)
-**Tests**:
-- Test emails with special chars: <, >, ", ', ;, \n, \r
-- Test missing @ symbol
-- Test multiple @ symbols
-- Test empty domain after @
-- Test malformed emails counted as invalid, not skipped
-**Status**: Complete
-**Files Changed**: `api/validate-csv.js` (added sanitizeEmail, updated getDomain, processCSV, validateEmails)
-**Estimated Complexity**: Low
-
----
-
-## Stage 4: Rate Limiting
-**Goal**: Add per-IP rate limiting to prevent abuse
-**Success Criteria**:
-- Maximum 10 requests per minute per IP
-- 429 status returned when limit exceeded
-- Rate limit resets after time window
-**Tests**:
-- Send 10 requests rapidly (should succeed)
-- Send 11th request (should get 429)
-- Wait 60 seconds, verify reset
+- Stripe checkout page loads without errors
+- User can proceed to payment
+**Tests**: 
+- Existing tests in `__tests__/api/create-checkout-session.test.js` pass
+- Manual test: Upload CSV → Click "Unlock Full Report" → Stripe checkout loads
 **Status**: Not Started
-**Files Changed**: `api/validate-csv.js` (new middleware/function)
-**Dependencies**: May need in-memory store for tracking
-**Estimated Complexity**: Medium
+
+### Changes:
+- `api/create-checkout-session.js` line 96: Change `${origin}?session_id=` to `${origin}/?session_id=`
+- `api/create-checkout-session.js` line 97: Change `${origin}` to `${origin}/`
 
 ---
 
-## Stage 5: Security Headers
-**Goal**: Add comprehensive security headers to all responses
+## Stage 2: Fix HTML Syntax Errors
+**Goal**: Fix syntax errors in index.html meta tags and JSON-LD
 **Success Criteria**:
-- CSP header prevents XSS
-- X-Frame-Options prevents clickjacking
-- X-Content-Type-Options prevents MIME sniffing
-- CORS remains functional for legitimate use
+- HTML validates
+- JSON-LD validates with Google Rich Results Test
+- No console errors related to meta tags
 **Tests**:
-- Verify all headers present in response
-- Test CSP doesn't break functionality
-- Verify CORS still works
-**Status**: Complete
-**Files Changed**: `api/validate-csv.js` (handler function)
-**Estimated Complexity**: Low
+- Manual validation with HTML validator
+- Manual validation with Google Rich Results Test
+- Browser console shows no errors
+**Status**: Not Started
+
+### Changes:
+- `index.html` line 18: Fix `href="https://email-validator.pattens.tech>` to `href="https://email-validator.pattens.tech">`
+- `index.html` line 34: Fix `content="https://email-validator.pattens.techassets/` to `content="https://email-validator.pattens.tech/assets/`
+- `index.html` line 196: Fix `"url": "https://email-validator.pattens.tech,` to `"url": "https://email-validator.pattens.tech",`
 
 ---
 
-## Implementation Notes
+## Stage 3: Verify Domain Consistency
+**Goal**: Ensure all domain references use `https://email-validator.pattens.tech`
+**Success Criteria**:
+- All URLs in codebase point to correct domain
+- Tests use correct domain
+**Tests**:
+- Manual search for any incorrect domain references
+- Run all tests
+**Status**: Not Started
 
-### Key Decisions
-- **File Size Limit**: 5MB (can hold ~250,000 emails, well above 300 limit)
-- **DNS Timeout**: 5 seconds (typical queries <1s, allows for slow networks)
-- **Rate Limit**: 10 requests/minute (generous for legitimate users)
-- **Sanitization**: Whitelist approach - only allow safe characters
+### Changes:
+- Verify all files use correct domain (already correct, just needs verification)
 
-### Testing Strategy
-1. Write failing tests first for each vulnerability
-2. Implement minimal fix to pass test
-3. Verify existing tests still pass
-4. Commit with working code
+---
 
-### Rollback Strategy
-Each stage is independent and can be:
-- Reverted without affecting others
-- Tested in isolation
-- Deployed incrementally
+## Stage 4: Integration Testing
+**Goal**: Verify all fixes work together in production-like environment
+**Success Criteria**:
+- All unit tests pass
+- Manual end-to-end flow works
+- No console errors
+**Tests**:
+- `npm test` passes
+- Manual flow: Upload CSV → Validate → Payment → Success
+**Status**: Not Started
+
+### Testing Checklist:
+- [ ] Run `npm test` - all tests pass
+- [ ] Upload valid CSV file
+- [ ] See validation results
+- [ ] Click "Unlock Full Report"
+- [ ] Stripe checkout loads correctly
+- [ ] No console errors throughout flow
