@@ -334,7 +334,10 @@
                                 <span id="totalCount" class="font-semibold text-white">0</span>
                             </div>
                         </div>
-                        <button onclick="resetForm()" class="mt-6 px-8 py-3 rounded-xl bg-white/15 border border-white/30 text-white font-medium transition-all hover:bg-white/25 hover:border-white/50 cursor-pointer">Validate another file</button>
+                        <div class="mt-6 flex gap-3">
+                            <button onclick="openPaymentModal()" class="flex-1 px-8 py-3 rounded-xl bg-blue-600 border border-blue-500 text-white font-medium transition-all hover:bg-blue-700 hover:border-blue-600 cursor-pointer">Unlock Full Report - £9.99</button>
+                            <button onclick="resetForm()" class="flex-1 px-8 py-3 rounded-xl bg-white/15 border border-white/30 text-white font-medium transition-all hover:bg-white/25 hover:border-white/50 cursor-pointer">Validate another file</button>
+                        </div>
                     </div>
                 </div>
 
@@ -652,6 +655,11 @@ Any updates will appear on this page with a revised effective date.
             document.getElementById('invalidCount').textContent = data.invalid || 0;
             document.getElementById('totalCount').textContent = data.total || 0;
             
+            // Store email results in sessionStorage for payment flow
+            if (data.emails && data.emails.length > 0) {
+                sessionStorage.setItem('validationResults', JSON.stringify(data.emails));
+            }
+            
             // Track success with Vercel Analytics
             if (window.va) {
                 window.va('track', 'Validation Success', {
@@ -679,6 +687,13 @@ Any updates will appear on this page with a revised effective date.
             successState.classList.remove('flex');
             uploadState.classList.remove('hidden');
             fileInput.value = '';
+            // Clear stored validation results
+            sessionStorage.removeItem('validationResults');
+        }
+
+        // Placeholder for payment modal function (will be implemented in Stage 4)
+        function openPaymentModal() {
+            alert('Payment modal will be implemented in the next stage');
         }
     </script>
 
