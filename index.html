@@ -514,19 +514,50 @@ Any updates will appear on this page with a revised effective date.
                     <div class="p-6">
                         <p class="text-slate-300 mb-6">Get access to the full detailed report with all email addresses and their validation status, plus CSV download.</p>
                         
+                        <!-- Price display -->
+                        <div class="mb-6 p-4 rounded-lg bg-white/5 border border-white/10">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">Full Report Access</span>
+                                <span class="text-2xl font-bold text-white">£9.99</span>
+                            </div>
+                        </div>
+                        
                         <!-- Loading state -->
                         <div id="paymentLoading" class="hidden text-center py-8">
                             <div class="inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
                             <p class="text-white mt-4">Preparing checkout...</p>
                         </div>
                         
-                        <!-- Express Checkout Element container -->
-                        <div id="expressCheckoutElement" class="mb-4"></div>
+                        <!-- Payment form -->
+                        <form id="paymentForm" class="hidden">
+                            <!-- Payment Element container -->
+                            <div id="paymentElement" class="mb-4"></div>
+                            
+                            <!-- Submit button -->
+                            <button id="submitPayment" type="submit" class="w-full px-6 py-3 rounded-lg font-semibold text-white transition-all bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span id="buttonText">Pay £9.99</span>
+                                <span id="buttonSpinner" class="hidden inline-block w-4 h-4 ml-2 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                            </button>
+                        </form>
                         
                         <!-- Error message -->
                         <div id="paymentError" class="hidden text-red-400 text-sm p-3 bg-red-900/20 border border-red-500/30 rounded-lg mb-4"></div>
                         
-                        <p class="text-xs text-slate-400 text-center">Secure payment powered by Stripe</p>
+                        <!-- Success message -->
+                        <div id="paymentSuccess" class="hidden text-center py-8">
+                            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 border-2 border-green-500 mb-4">
+                                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Payment Successful!</h3>
+                            <p class="text-slate-300 mb-4">Your full report is now available.</p>
+                            <button id="viewReportBtn" class="px-6 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+                                View Full Report
+                            </button>
+                        </div>
+                        
+                        <p class="text-xs text-slate-400 text-center mt-4">Secure payment powered by Stripe</p>
                     </div>
                 </div>
             </div>
@@ -762,7 +793,15 @@ Any updates will appear on this page with a revised effective date.
         const closePaymentModalBtn = document.getElementById('closePaymentModal');
         const paymentLoading = document.getElementById('paymentLoading');
         const paymentError = document.getElementById('paymentError');
-        const expressCheckoutElement = document.getElementById('expressCheckoutElement');
+        const paymentForm = document.getElementById('paymentForm');
+        const paymentSuccess = document.getElementById('paymentSuccess');
+        const submitPaymentBtn = document.getElementById('submitPayment');
+        const buttonText = document.getElementById('buttonText');
+        const buttonSpinner = document.getElementById('buttonSpinner');
+        const viewReportBtn = document.getElementById('viewReportBtn');
+
+        let elements;
+        let paymentElement;
 
         async function openPaymentModal() {
             // Get stored validation results
@@ -785,11 +824,12 @@ Any updates will appear on this page with a revised effective date.
             document.body.classList.add('overflow-hidden');
             paymentLoading.classList.remove('hidden');
             paymentError.classList.add('hidden');
-            expressCheckoutElement.innerHTML = '';
+            paymentForm.classList.add('hidden');
+            paymentSuccess.classList.add('hidden');
 
             try {
-                // Create checkout session
-                const response = await fetch('/api/create-checkout-session', {
+                // Create payment intent
+                const response = await fetch('/api/create-payment-intent', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -799,23 +839,47 @@ Any updates will appear on this page with a revised effective date.
 
                 if (!response.ok) {
                     const error = await response.json();
-                    throw new Error(error.error || 'Failed to create checkout session');
+                    throw new Error(error.error || 'Failed to create payment intent');
                 }
 
-                const { sessionId, url } = await response.json();
+                const { clientSecret } = await response.json();
 
-                // Hide loading
-                paymentLoading.classList.add('hidden');
-
-                // Initialize Express Checkout Element
-                const options = {
-                    clientSecret: sessionId,
+                // Initialize Stripe Elements with custom styling
+                const appearance = {
+                    theme: 'night',
+                    variables: {
+                        colorPrimary: '#3b82f6',
+                        colorBackground: '#0f172a',
+                        colorText: '#e2e8f0',
+                        colorDanger: '#ef4444',
+                        fontFamily: 'system-ui, sans-serif',
+                        spacingUnit: '4px',
+                        borderRadius: '8px',
+                    },
+                    rules: {
+                        '.Input': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            boxShadow: 'none',
+                        },
+                        '.Input:focus': {
+                            border: '1px solid #3b82f6',
+                            boxShadow: '0 0 0 1px #3b82f6',
+                        },
+                        '.Label': {
+                            color: '#cbd5e1',
+                            fontWeight: '500',
+                        },
+                    }
                 };
 
-                // For now, redirect to Stripe Checkout URL directly
-                // Express Checkout Element requires client secret from Payment Intent, not Checkout Session
-                // We'll use standard Checkout redirect instead
-                window.location.href = url;
+                elements = stripe.elements({ clientSecret, appearance });
+                paymentElement = elements.create('payment');
+                paymentElement.mount('#paymentElement');
+
+                // Hide loading and show form
+                paymentLoading.classList.add('hidden');
+                paymentForm.classList.remove('hidden');
 
             } catch (error) {
                 console.error('Payment error:', error);
@@ -832,11 +896,86 @@ Any updates will appear on this page with a revised effective date.
             }
         }
 
+        async function handleSubmit(e) {
+            e.preventDefault();
+
+            if (!stripe || !elements) {
+                return;
+            }
+
+            // Disable submit button
+            submitPaymentBtn.disabled = true;
+            buttonText.classList.add('hidden');
+            buttonSpinner.classList.remove('hidden');
+            paymentError.classList.add('hidden');
+
+            try {
+                const { error, paymentIntent } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/?payment=success',
+                    },
+                    redirect: 'if_required',
+                });
+
+                if (error) {
+                    // Payment failed
+                    paymentError.textContent = error.message;
+                    paymentError.classList.remove('hidden');
+
+                    // Track error with Vercel Analytics
+                    if (window.va) {
+                        window.va('track', 'Payment Failed', {
+                            error: error.message
+                        });
+                    }
+                } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+                    // Payment succeeded
+                    paymentForm.classList.add('hidden');
+                    paymentSuccess.classList.remove('hidden');
+
+                    // Track success with Vercel Analytics
+                    if (window.va) {
+                        window.va('track', 'Payment Success', {
+                            amount: 9.99
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error('Payment error:', err);
+                paymentError.textContent = 'An unexpected error occurred. Please try again.';
+                paymentError.classList.remove('hidden');
+            } finally {
+                // Re-enable submit button
+                submitPaymentBtn.disabled = false;
+                buttonText.classList.remove('hidden');
+                buttonSpinner.classList.add('hidden');
+            }
+        }
+
+        paymentForm.addEventListener('submit', handleSubmit);
+
+        viewReportBtn.addEventListener('click', () => {
+            closePaymentModal();
+            // Trigger showing detailed results
+            showDetailedResults();
+        });
+
         function closePaymentModal() {
             paymentModal.classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
             paymentError.classList.add('hidden');
-            expressCheckoutElement.innerHTML = '';
+            paymentForm.classList.add('hidden');
+            paymentSuccess.classList.add('hidden');
+            
+            // Clean up Stripe elements
+            if (paymentElement) {
+                paymentElement.unmount();
+                paymentElement = null;
+            }
+            if (elements) {
+                elements = null;
+            }
         }
 
         closePaymentModalBtn.addEventListener('click', closePaymentModal);
