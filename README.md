@@ -85,24 +85,70 @@ test@example.com
 
 ## Validation Logic
 
-### Email Processing (Stage 3: Input Sanitization)
+### Email Processing & Input Sanitization
 
 **Input Sanitization**:
 - Removes dangerous characters (`<`, `>`, `"`, `'`, `;`, `\`) to prevent injection attacks
 - Removes newlines, tabs, and carriage returns
 - Trims whitespace
 
-**Validation**:
-- **Valid**: Valid email format AND domain has MX records (can receive email)
-- **Invalid**: Malformed format (missing @, multiple @, empty domain) OR valid format but no MX records
-- **Skipped**: Empty lines and duplicates only
+**Validation Process**:
+The validator performs comprehensive email validation using a multi-stage process:
 
-**Counting Behavior** (Stage 3):
+1. **Format Validation**: Checks email structure and syntax
+2. **DNS Validation**: Verifies domain exists and can receive email (MX records)
+3. **Status Classification**: Assigns specific status codes for detailed reporting
+
+**Counting Behavior**:
 - All processed emails are counted: `total = valid + invalid`
 - Malformed emails are counted as invalid, not skipped
+- Empty lines and duplicates are skipped (not counted)
 - This ensures accurate reporting of email quality
 
 **Score Calculation**: `(valid emails / total emails) × 100`
+
+### Validation Status Codes
+
+The validator returns detailed status codes for each email, classified into three categories:
+
+#### Pass Status (Valid Emails)
+| Status Code | Description |
+|-------------|-------------|
+| `Success` | Email format is valid and domain has MX records (can receive email) |
+| `ServerIsCatchAll` | Mail server accepts all emails (catch-all configuration) |
+
+#### Fail Status (Invalid Emails)
+| Status Code | Description |
+|-------------|-------------|
+| `AtSignNotFound` | Email is missing the @ symbol |
+| `DoubleDotSequence` | Email contains two consecutive dots (..) |
+| `InvalidAddressLength` | Email exceeds maximum length (254 characters) |
+| `InvalidCharacterInSequence` | Email contains invalid characters |
+| `InvalidLocalPartLength` | Part before @ is too long (max 64 characters) or empty |
+| `DomainPartCompliancyFailure` | Domain part is malformed or doesn't meet format requirements |
+| `DnsQueryTimeout` | DNS lookup took too long (>5 seconds) |
+| `DomainDoesNotExist` | Domain doesn't exist in DNS |
+| `DomainHasNullMx` | Domain exists but has no mail servers (MX records) |
+| `DnsConnectionFailure` | Could not connect to DNS to verify domain |
+| `UnhandledException` | Unexpected error during validation |
+
+#### Ignore Status (Edge Cases)
+| Status Code | Description |
+|-------------|-------------|
+| `Duplicate` | Email appeared multiple times in the list (counted once) |
+| `CatchAllValidationTimeout` | Timeout during catch-all server detection |
+
+### Validation Examples
+
+**Valid Email**:
+- `john@example.com` → `Success` (format valid + MX records exist)
+
+**Invalid Emails**:
+- `invalid.email` → `AtSignNotFound` (missing @)
+- `test@` → `DomainPartCompliancyFailure` (no domain)
+- `user..name@domain.com` → `DoubleDotSequence` (double dots)
+- `test@nonexistentdomain123xyz.com` → `DomainDoesNotExist` (domain not found)
+- `user@valid-domain.com` (no MX) → `DomainHasNullMx` (domain exists but can't receive email)
 
 ## Deployment
 
@@ -176,17 +222,19 @@ Sample CSV files for testing:
 
 ### Test Coverage
 
-**73 tests covering**:
-- Email format validation
+**87 tests covering**:
+- Comprehensive email format validation with status codes
 - Domain extraction with edge cases
-- MX record checking
-- CSV processing with sanitization
-- File size validation (Stage 1)
-- Input sanitization (Stage 3)
-- Malformed email counting (Stage 3)
+- MX record checking with detailed error states
+- DNS timeout protection
+- CSV processing with input sanitization
+- File size validation and protection
+- Security headers verification
+- Input sanitization (dangerous character removal)
+- Malformed email detection and counting
 - Stripe checkout session creation
 - Stripe transaction simulation (success and failure scenarios)
-- Payment error handling
+- Stripe payment error handling (card declined, insufficient funds, etc.)
 
 ### Stripe Testing
 
@@ -216,13 +264,33 @@ For detailed information on testing Stripe payment integration, including test c
   "valid": 87,
   "invalid": 13,
   "percentage": 87.0,
-  "skipped": 0
+  "skipped": 0,
+  "emails": [
+    {
+      "email": "valid@example.com",
+      "status": "Success",
+      "valid": true
+    },
+    {
+      "email": "invalid.email",
+      "status": "AtSignNotFound",
+      "valid": false
+    }
+  ]
 }
 ```
 
+**Response Fields:**
+- `total`: Total number of emails processed (valid + invalid)
+- `valid`: Number of emails that passed validation
+- `invalid`: Number of emails that failed validation
+- `percentage`: Percentage of valid emails (valid/total × 100)
+- `skipped`: Number of emails skipped (duplicates, empty lines)
+- `emails`: Array of individual email results with detailed status codes
+
 **Error Responses:**
 - `400`: Invalid file format or no emails found
-- `400`: File exceeds 300 email limit
+- `413`: File exceeds 5MB size limit
 - `500`: Server error
 
 ## Browser Support
