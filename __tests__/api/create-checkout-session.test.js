@@ -12,6 +12,9 @@ jest.mock('stripe', () => {
 
 const handler = require('../../api/create-checkout-session');
 
+// Test constants
+const TEST_ORIGIN = 'https://email-validator.pattens.tech';
+
 describe('Create Checkout Session API', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -23,7 +26,7 @@ describe('Create Checkout Session API', () => {
     method,
     body,
     headers: {
-      origin: 'https://email-validator.pattens.tech',
+      origin: TEST_ORIGIN,
       ...headers
     }
   });
