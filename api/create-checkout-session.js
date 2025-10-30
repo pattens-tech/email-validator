@@ -76,7 +76,7 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'Email data too large for processing' });
         }
 
-        // Get the origin for success/cancel URLs
+         // Get the origin for success/cancel URLs
         const origin = req.headers.origin || req.headers.referer?.replace(/\/$/, '') || 'https://email-validator.pattens.tech';
 
         // Create Stripe checkout session
@@ -93,8 +93,8 @@ module.exports = async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: `${origin}?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${origin}`,
+            success_url: `${origin}/?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/`,
             metadata: {
                 emails: emailsJson,
                 emailCount: sanitizedEmails.length.toString(),
