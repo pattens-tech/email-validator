@@ -2,6 +2,9 @@ module.exports = {
   // Test environment for Node.js serverless functions
   testEnvironment: 'node',
 
+  // Setup environment variables for tests
+  setupFiles: ['<rootDir>/jest.setup.js'],
+
   // Coverage collection settings
   collectCoverageFrom: [
     'api/**/*.js',
