@@ -12,6 +12,12 @@ jest.mock('stripe', () => {
 
 const handler = require('../../api/create-checkout-session');
 
+// Import Stripe test helpers
+const {
+  createTestEmailData,
+  TEST_PRICE_AMOUNTS
+} = require('../helpers/stripe-test-helpers');
+
 // Test constants
 const TEST_ORIGIN = 'https://email-validator.pattens.tech';
 
