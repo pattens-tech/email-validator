@@ -819,6 +819,13 @@ Any updates will appear on this page with a revised effective date.
                 return;
             }
 
+            // Transform email data for payment API
+            // The validation API returns detailed status codes, but the payment API expects 'Valid' or 'Invalid'
+            const transformedEmails = emails.map(item => ({
+                email: item.email,
+                status: item.valid === true || item.status === 'Valid' ? 'Valid' : 'Invalid'
+            }));
+
             // Show modal and loading state
             paymentModal.classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
@@ -834,7 +841,7 @@ Any updates will appear on this page with a revised effective date.
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ emails }),
+                    body: JSON.stringify({ emails: transformedEmails }),
                 });
 
                 if (!response.ok) {
@@ -1021,12 +1028,14 @@ Any updates will appear on this page with a revised effective date.
                 emailSpan.title = item.email; // Show full email on hover
                 
                 const badge = document.createElement('span');
+                // Use the valid boolean field to determine display status
+                const isValid = item.valid === true || item.status === 'Valid';
                 badge.className = `px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${
-                    item.status === 'Valid' 
+                    isValid
                         ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
                         : 'bg-red-500/20 text-red-400 border border-red-500/30'
                 }`;
-                badge.textContent = item.status;
+                badge.textContent = isValid ? 'Valid' : 'Invalid';
                 
                 row.appendChild(emailSpan);
                 row.appendChild(badge);
