@@ -702,7 +702,7 @@ Any updates will appear on this page with a revised effective date.
             formData.append('file', file);
 
             try {
-                const response = await fetch('https://email-validator.pattens.tech/api/validate-csv', {
+                const response = await fetch('/api/validate-csv', {
                     method: 'POST',
                     body: formData
                 });

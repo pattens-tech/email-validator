@@ -1,7 +1,13 @@
 const Stripe = require('stripe');
 
 // Initialize Stripe with secret key from environment variable
-const stripe = new Stripe(process.env.sk_test_51SNjUMCmTraQU9pzvX0oCkdah2Zn5ImLpcPhTRk5lRrZ0PRXDTPJnbZrloayGPwvI1AGjpmKhlopWe3cCANfe6M400zw0I5yH7);
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+if (!stripeSecretKey) {
+    throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+}
+
+const stripe = new Stripe(stripeSecretKey);
 
 // Constants
 const MAX_METADATA_SIZE = 500 * 1024; // Stripe metadata limit is 500KB per key
