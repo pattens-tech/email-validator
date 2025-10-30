@@ -395,7 +395,7 @@ This application uses [Vercel Analytics](https://vercel.com/docs/analytics) to t
 
 ## Limitations
 
-- Maximum 300 emails per upload
+- Maximum 300 unique emails per upload (after duplicates removed)
 - MX validation only (does not verify mailbox existence)
 - Synchronous processing (no background jobs)
 - No authentication required (public tool)
