@@ -18,7 +18,7 @@ const STRIPE_TEST_CARDS = {
   MASTERCARD_PREPAID_SUCCESS: '5105105105105100',
   AMEX_SUCCESS: '378282246310005',
   DISCOVER_SUCCESS: '6011111111111117',
-  DINERS_CLUB_SUCCESS: '3056930009020004',
+  DINERS_CLUB_SUCCESS: '30569309025904',
   JCB_SUCCESS: '3566002020360505',
 
   // Card errors - Different decline codes
@@ -38,7 +38,7 @@ const STRIPE_TEST_CARDS = {
   // Additional test scenarios
   ALWAYS_INCOMPLETE: '4000000000006975', // Card payments succeed but the charge remains pending
   ALWAYS_DECLINE_CHARGE: '4000000000000341', // Charge succeeds but is declined when captured
-  DECLINE_CHARGE_INSUFFICIENT_FUNDS: '4000000000009979',
+  DECLINE_CHARGE_INSUFFICIENT_FUNDS: '4000000000009987', // Charge declined when captured - insufficient funds
 };
 
 /**

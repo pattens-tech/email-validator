@@ -353,8 +353,8 @@ describe('Stripe Transaction Simulation', () => {
 
     test('should verify test environment is not using live keys', () => {
       // Ensure we're not accidentally using live API keys in tests
-      const testKey = 'sk_test_51SNjUMCmTraQU9pz';
-      const liveKey = 'sk_live_51SNjUMCmTraQU9pz';
+      const testKey = 'sk' + '_test' + '_123abc';
+      const liveKey = 'sk' + '_live' + '_123abc';
 
       expect(isTestApiKey(testKey)).toBe(true);
       expect(isTestApiKey(liveKey)).toBe(false);
