@@ -203,22 +203,26 @@ async function validateEmails(emails) {
 
     await Promise.all(validationPromises);
 
-    // Count valid and invalid emails
+    // Count valid and invalid emails and build results array
     let validCount = 0;
     let invalidCount = invalidFormatEmails.size; // Start with invalid format count
+    const emailResults = []; // Array of {email, status}
 
-    // Count emails that passed format validation
+    // Process each email and determine its status
     for (const email of emailsToValidate) {
-        // Skip emails already counted as invalid format (O(1) lookup with Set)
+        // Check if email has invalid format
         if (invalidFormatEmails.has(email)) {
+            emailResults.push({ email, status: 'Invalid' });
             continue;
         }
         
         const domain = getDomain(email);
         if (domainValidation.get(domain)) {
             validCount++;
+            emailResults.push({ email, status: 'Valid' });
         } else {
             invalidCount++; // Valid format but no MX records
+            emailResults.push({ email, status: 'Invalid' });
         }
     }
 
@@ -230,7 +234,8 @@ async function validateEmails(emails) {
         valid: validCount,
         invalid: invalidCount,
         percentage,
-        skipped: emails.length - emailsToValidate.length
+        skipped: emails.length - emailsToValidate.length,
+        emails: emailResults
     };
 }
 
