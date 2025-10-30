@@ -1,11 +1,20 @@
 const Stripe = require('stripe');
 
-// Initialize Stripe with environment variable or fallback to test key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_51SNjUMCmTraQU9pzvX0oCkdah2Zn5ImLpcPhTRk5lRrZ0PRXDTPJnbZrloayGPwvI1AGjpmKhlopWe3cCANfe6M400zw0I5yH7');
+// Initialize Stripe with environment variable
+// For local development, use VERCEL_ENV or provide STRIPE_SECRET_KEY in .env.local
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+if (!stripeSecretKey) {
+    throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+}
+
+const stripe = new Stripe(stripeSecretKey);
 
 // Set security headers
-function setSecurityHeaders(res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+function setSecurityHeaders(res, origin) {
+    // Allow requests from the application's domain
+    const allowedOrigin = origin || 'https://email-validator.pattens.tech';
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -35,8 +44,11 @@ function validateEmailData(emails) {
 }
 
 module.exports = async (req, res) => {
+    // Get origin from request headers
+    const origin = req.headers.origin;
+    
     // Set security headers for all responses
-    setSecurityHeaders(res);
+    setSecurityHeaders(res, origin);
 
     // Handle OPTIONS request (CORS preflight)
     if (req.method === 'OPTIONS') {
@@ -62,8 +74,8 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'No valid email data provided' });
         }
 
-        // Get origin from request headers
-        const origin = req.headers.origin || 'https://email-validator.pattens.tech';
+        // Use origin for redirect URLs
+        const redirectOrigin = origin || 'https://email-validator.pattens.tech';
 
         // Create Stripe checkout session
         const session = await stripe.checkout.sessions.create({
@@ -82,8 +94,8 @@ module.exports = async (req, res) => {
                     quantity: 1,
                 },
             ],
-            success_url: `${origin}/?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${origin}/`,
+            success_url: `${redirectOrigin}/?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${redirectOrigin}/`,
             metadata: {
                 emailCount: validatedEmails.length.toString(),
                 validEmails: validatedEmails.filter(e => e.status === 'Valid').length.toString(),

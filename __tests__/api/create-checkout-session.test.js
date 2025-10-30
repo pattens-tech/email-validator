@@ -220,7 +220,7 @@ describe('Create Checkout Session API', () => {
 
       await handler(req, res);
 
-      expect(res.headers['Access-Control-Allow-Origin']).toBe('*');
+      expect(res.headers['Access-Control-Allow-Origin']).toBe(TEST_ORIGIN);
       expect(res.headers['Access-Control-Allow-Methods']).toBe('POST, OPTIONS');
       expect(res.headers['Access-Control-Allow-Headers']).toBe('Content-Type');
     });
