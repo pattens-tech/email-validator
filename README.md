@@ -207,12 +207,13 @@ Tests are located in the `__tests__/` directory:
 ```
 __tests__/
 ├── api/
-│   ├── validate-csv.test.js              # Email validation logic tests
-│   └── create-checkout-session.test.js   # Stripe checkout tests
+│   ├── validate-csv.test.js                    # Email validation logic tests
+│   ├── create-payment-intent.test.js           # Stripe Payment Intent tests (integrated approach)
+│   └── create-checkout-session.test.js         # Stripe Checkout tests (legacy, not in production)
 ├── integration/
-│   └── stripe-transaction-simulation.test.js  # Stripe transaction simulation tests
+│   └── stripe-transaction-simulation.test.js   # Stripe transaction simulation tests
 └── helpers/
-    └── stripe-test-helpers.js            # Stripe test utilities
+    └── stripe-test-helpers.js                  # Stripe test utilities
 ```
 
 ### Test Files
@@ -233,7 +234,8 @@ Sample CSV files for testing:
 - Security headers verification
 - Input sanitization (dangerous character removal)
 - Malformed email detection and counting
-- Stripe checkout session creation
+- Stripe Payment Intent creation (integrated embedded payment form)
+- Stripe Checkout session creation (legacy tests, not used in production)
 - Stripe transaction simulation (success and failure scenarios)
 - Stripe payment error handling (card declined, insufficient funds, etc.)
 

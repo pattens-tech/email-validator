@@ -156,13 +156,17 @@ const emails = createTestEmailData(10); // Creates 10 test email entries
 test('should process successful payment', async () => {
   const emails = createTestEmailData(5);
   
-  // Create checkout session
-  const response = await createCheckoutSession(emails);
+  // Create payment intent
+  const response = await fetch('/api/create-payment-intent', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ emails })
+  });
   
-  expect(response.sessionId).toBeDefined();
-  expect(response.url).toContain('checkout.stripe.com');
+  const { clientSecret } = await response.json();
+  expect(clientSecret).toBeDefined();
   
-  // In manual testing, use card: 4242 4242 4242 4242
+  // In manual testing, use card: 4242 4242 4242 4242 in embedded form
 });
 ```
 
@@ -171,6 +175,7 @@ test('should process successful payment', async () => {
 ```javascript
 test('should handle declined payment', async () => {
   // Use GENERIC_DECLINE card: 4000 0000 0000 0002
+  // in the embedded Stripe Elements form
   // Payment will be declined with appropriate error message
 });
 ```
@@ -180,6 +185,7 @@ test('should handle declined payment', async () => {
 ```javascript
 test('should handle insufficient funds', async () => {
   // Use INSUFFICIENT_FUNDS card: 4000 0000 0000 9995
+  // in the embedded Stripe Elements form
   // Payment will be declined with insufficient funds error
 });
 ```
@@ -190,55 +196,70 @@ When testing the Stripe integration manually:
 
 - [ ] Navigate to the application
 - [ ] Upload a CSV file with test emails
-- [ ] Click "Unlock Full Report" or payment button
-- [ ] Verify Stripe checkout page loads
-- [ ] Use test card `4242 4242 4242 4242`
+- [ ] View validation results summary
+- [ ] Click "Unlock Full Report - £9.99" button
+- [ ] Verify payment modal opens (embedded in page, no redirect)
+- [ ] Wait for payment form to load
+- [ ] Verify payment form styling matches Email Validator theme (dark mode)
+- [ ] Use test card `4242 4242 4242 4242` in the embedded form
 - [ ] Enter expiration date in the future (e.g., `12/34`)
 - [ ] Enter any CVC (e.g., `123`)
-- [ ] Enter any billing details
-- [ ] Complete payment
-- [ ] Verify redirect to success page
+- [ ] Enter any ZIP code (e.g., `12345`)
+- [ ] Click "Pay £9.99" button
+- [ ] Verify payment processes without leaving the page
+- [ ] Check success message appears in modal
+- [ ] Click "View Full Report" button
+- [ ] Verify detailed report with all emails is displayed
+- [ ] Test CSV download functionality
 - [ ] Check Stripe dashboard for test mode payment
 
 ## Simulating Different Scenarios
 
 ### Test Successful Payment
 - Card: `4242 4242 4242 4242`
-- Expected: Payment succeeds, user redirected to success page
+- Location: Enter in embedded Stripe Elements form in payment modal
+- Expected: Payment succeeds, success message shown in modal, "View Full Report" button appears
 
 ### Test Declined Payment
 - Card: `4000 0000 0000 0002`
-- Expected: Payment declined, error message shown
+- Location: Enter in embedded Stripe Elements form in payment modal
+- Expected: Payment declined, error message shown below form (red alert box)
 
 ### Test Insufficient Funds
 - Card: `4000 0000 0000 9995`
-- Expected: Insufficient funds error shown
+- Location: Enter in embedded Stripe Elements form in payment modal
+- Expected: Insufficient funds error shown below form (red alert box)
 
 ### Test Expired Card
 - Card: `4000 0000 0000 0069`
-- Expected: Expired card error shown
+- Location: Enter in embedded Stripe Elements form in payment modal
+- Expected: Expired card error shown below form (red alert box)
 
 ### Test Wrong CVC
 - Card: `4000 0000 0000 0127`
-- Expected: CVC check fails, error shown
+- Location: Enter in embedded Stripe Elements form in payment modal
+- Expected: CVC check fails, error shown below form (red alert box)
 
 ## Best Practices
 
 1. **Always Use Test Mode**: Never test with live API keys or real cards
 2. **Test All Scenarios**: Test both success and failure cases
-3. **Verify Error Handling**: Ensure proper error messages are shown to users
-4. **Check Metadata**: Verify email data is correctly stored in session metadata
+3. **Verify Error Handling**: Ensure proper error messages are shown to users in the modal
+4. **Check Metadata**: Verify email data is correctly stored in Payment Intent metadata
 5. **Monitor Test Dashboard**: Use Stripe Dashboard in test mode to verify transactions
 6. **Clean Up**: Test mode transactions don't need cleanup but can be deleted from dashboard
 7. **Document Changes**: Update tests when payment flow changes
+8. **Test UI/UX**: Verify payment modal styling matches the Email Validator theme
+9. **Test Modal Behavior**: Ensure modal opens/closes correctly and doesn't redirect
 
 ## Stripe Dashboard
 
 View test transactions in the Stripe Dashboard:
 1. Login to [Stripe Dashboard](https://dashboard.stripe.com/)
 2. Toggle to **Test Mode** (switch in top right)
-3. Navigate to **Payments** → **Checkout sessions**
-4. View test transactions and their details
+3. Navigate to **Payments** → **All payments**
+4. Look for Payment Intent transactions (not Checkout Sessions)
+5. View transaction details including metadata with email data
 
 ## Environment Variables
 
@@ -268,11 +289,36 @@ STRIPE_TEST_API_KEY=sk_test_...
 ### Issue: Tests failing with "Network error"
 - **Solution**: Check that Stripe API is accessible. The mocked tests should still pass.
 
+## Integration Architecture
+
+This application uses **Stripe Payment Intents** with **Stripe Elements** for an integrated payment experience:
+
+- **Payment Intents API**: Creates payment intents on the server
+- **Stripe Elements**: Embedded payment form with custom styling
+- **Modal-based UI**: Payment happens within the application, no redirect
+- **Custom Theme**: Dark mode styling matching the Email Validator interface
+
+### Why Payment Intents vs Checkout Sessions?
+
+**Payment Intents (Current)**:
+- ✅ Embedded payment form within the app
+- ✅ Full control over UI/UX and styling
+- ✅ Better user experience (no page redirect)
+- ✅ Consistent branding and theme
+- ✅ Modal-based workflow
+
+**Checkout Sessions (Not Used)**:
+- ❌ Redirects to Stripe-hosted page
+- ❌ Limited styling customization
+- ❌ Breaks user flow with redirect
+- ❌ Stripe branding instead of app branding
+
 ## Additional Resources
 
 - [Stripe Testing Documentation](https://docs.stripe.com/testing)
 - [Stripe Test Cards](https://docs.stripe.com/testing#cards)
-- [Stripe Checkout Documentation](https://docs.stripe.com/payments/checkout)
+- [Stripe Payment Intents Documentation](https://docs.stripe.com/payments/payment-intents)
+- [Stripe Elements Documentation](https://docs.stripe.com/elements)
 - [Stripe API Reference](https://docs.stripe.com/api)
 - [Stripe Node.js Library](https://github.com/stripe/stripe-node)
 
