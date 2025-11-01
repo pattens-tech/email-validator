@@ -46,99 +46,13 @@
 <link rel="icon" type="image/png" sizes="32x32" href="assets/pattens-logo.png">
 <link rel="apple-touch-icon" href="assets/pattens-logo.png">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- CSS3 Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
 
     <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
 
-    <style>
-        :root {
-            --gradient-background-start: #0f172a;
-            --gradient-background-end: #1e293b;
-            --first-color: 59, 130, 246;
-            --second-color: 139, 92, 246;
-            --third-color: 236, 72, 153;
-            --fourth-color: 249, 115, 22;
-            --fifth-color: 16, 185, 129;
-            --size: 80%;
-            --blending-value: hard-light;
-        }
 
-        /* Gradient Animation Keyframes */
-        @keyframes first {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(-25%, 25%) scale(1.1); }
-            50% { transform: translate(25%, 25%) scale(0.9); }
-            75% { transform: translate(-25%, -25%) scale(1.05); }
-        }
-
-        @keyframes second {
-            0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-            25% { transform: translate(30%, -30%) rotate(90deg) scale(1.1); }
-            50% { transform: translate(-30%, 30%) rotate(180deg) scale(0.9); }
-            75% { transform: translate(30%, 30%) rotate(270deg) scale(1.05); }
-        }
-
-        @keyframes third {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(40%, 20%) scale(1.15); }
-            66% { transform: translate(-40%, -20%) scale(0.85); }
-        }
-
-        @keyframes fourth {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            20% { transform: translate(-35%, -35%) scale(1.1); }
-            40% { transform: translate(35%, -35%) scale(0.95); }
-            60% { transform: translate(-35%, 35%) scale(1.05); }
-            80% { transform: translate(35%, 35%) scale(0.9); }
-        }
-
-        @keyframes fifth {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(-50%, 50%) rotate(180deg); }
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .animate-first { animation: first 20s ease-in-out infinite; }
-        .animate-second { animation: second 25s ease-in-out infinite; }
-        .animate-third { animation: third 30s ease-in-out infinite; }
-        .animate-fourth { animation: fourth 35s ease-in-out infinite; }
-        .animate-fifth { animation: fifth 40s linear infinite; }
-
-        .gradients-container {
-            filter: url(#blurMe) blur(40px);
-        }
-
-        .hero-section.hiding {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-
-        .upload-section {
-            opacity: 0;
-            transform: translateY(20px);
-            pointer-events: none;
-        }
-
-        .upload-section.visible {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            width: 48px;
-            height: 48px;
-            animation: spin 1s linear infinite;
-        }
-    </style>
 
     <!-- Schema.org Structured Data (JSON-LD) -->
     <script type="application/ld+json">
@@ -207,11 +121,11 @@
     }
     </script>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100 antialiased flex flex-col">
+<body>
     <!-- Background Effects -->
-    <div class="fixed inset-0 overflow-hidden">
+    <div class="background-container">
         <!-- Gradient Animation Background -->
-        <div class="fixed inset-0 w-full h-full overflow-hidden opacity-60" style="background: linear-gradient(40deg, var(--gradient-background-start), var(--gradient-background-end));">
+        <div class="gradient-background">
             <svg class="hidden">
                 <defs>
                     <filter id="blurMe">
@@ -221,23 +135,23 @@
                     </filter>
                 </defs>
             </svg>
-            <div class="gradients-container h-full w-full blur-lg">
-                <div class="absolute animate-first opacity-100" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, var(--first-color) 0, var(--first-color) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: center center;"></div>
-                <div class="absolute animate-second opacity-100" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, rgba(var(--second-color), 0.8) 0, rgba(var(--second-color), 0) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: calc(50% - 400px);"></div>
-                <div class="absolute animate-third opacity-100" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, rgba(var(--third-color), 0.8) 0, rgba(var(--third-color), 0) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: calc(50% + 400px);"></div>
-                <div class="absolute animate-fourth opacity-70" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, rgba(var(--fourth-color), 0.8) 0, rgba(var(--fourth-color), 0) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: calc(50% - 200px);"></div>
-                <div class="absolute animate-fifth opacity-100" style="width: var(--size); height: var(--size); top: calc(50% - var(--size) / 2); left: calc(50% - var(--size) / 2); background: radial-gradient(circle at center, rgba(var(--fifth-color), 0.8) 0, rgba(var(--fifth-color), 0) 50%) no-repeat; mix-blend-mode: var(--blending-value); transform-origin: calc(50% - 800px) calc(50% + 800px);"></div>
+            <div class="gradients-container">
+                <div class="gradient-orb gradient-orb-1"></div>
+                <div class="gradient-orb gradient-orb-2"></div>
+                <div class="gradient-orb gradient-orb-3"></div>
+                <div class="gradient-orb gradient-orb-4"></div>
+                <div class="gradient-orb gradient-orb-5"></div>
             </div>
         </div>
 
         <!-- Stars Background -->
-        <div class="fixed inset-0 h-full w-full overflow-hidden">
-            <canvas id="starsCanvas" class="h-full w-full absolute inset-0 opacity-50"></canvas>
+        <div class="stars-container">
+            <canvas id="starsCanvas" class="stars-canvas"></canvas>
         </div>
 
         <!-- Bottom Glow Effect -->
-        <div class="fixed inset-0 h-full w-full overflow-hidden">
-            <svg class="w-full h-full absolute inset-0 opacity-60">
+        <div class="bottom-glow-container">
+            <svg class="bottom-glow-svg">
                 <defs>
                     <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" style="stop-color:#2EB9DF;stop-opacity:0"></stop>
@@ -245,131 +159,133 @@
                     </linearGradient>
                 </defs>
             </svg>
-            <div class="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-b from-transparent to-gray-950"></div>
-            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 min-w-[50em] h-[100vh] -mb-[80vh] rounded-full bg-black" style="box-shadow: inset 0 2px 20px #93c5fd, 0 -10px 50px 1px #93c5fd7d;"></div>
+            <div class="bottom-gradient"></div>
+            <div class="bottom-glow-orb"></div>
         </div>
     </div>
 
     <!-- Main Content -->
-    <main class="relative z-10 flex-1">
+    <main class="main-content">
         <!-- Header -->
-        <header class="flex items-center justify-between px-6 py-6 md:px-12">
+        <header class="header">
             <a href="https://pattens.tech"><img src="assets/pattens-white.svg"  alt="Pattens Logo" width="200"></a>
 
 
-            <a href="https://pattens.tech" class="flex flex-row items-center hover:opacity-80 transition-opacity">
-                <div class="mr-2 h-10 w-10 flex items-center justify-center rounded-sm">
+            <a href="https://pattens.tech" class="header-logo-link">
+                <div class="header-logo-placeholder">
                   
                 </div>
             </a>
-            <div class="flex items-center gap-4">
+            <div class="header-actions">
               
-                <a class="rounded-lg bg-white/95 px-4 py-2 text-sm font-semibold text-slate-900 transition duration-200 hover:bg-white" href="https://github.com/pattens-tech">View on GitHub</a>
+                <a class="btn-github" href="https://github.com/pattens-tech">View on GitHub</a>
             </div>
         </header>
 
         <!-- Hero Section -->
-        <div id="heroSection" class="hero-section flex flex-col items-center justify-center gap-16 px-6 pb-20 pt-10 text-center min-h-[calc(100vh-88px)] transition-all duration-500">
-            <section class="max-w-4xl mx-auto space-y-10">
-                <h1 class="text-5xl md:text-7xl font-semibold text-white">Contact list verification</h1>
-                <p class="max-w-3xl mx-auto text-xl text-slate-200/90">We'll verify your contact list to ensure all email addresses are legitimate.</p>
-                <div class="flex flex-col items-center gap-4">
-                    <button id="verifyNowBtn" class="inline-flex items-center justify-center gap-2 rounded-lg bg-white/95 px-7 py-3 text-base font-semibold text-slate-900 transition duration-200 hover:bg-white cursor-pointer">
-                        Verify now
-                        <span aria-hidden="true" class="text-lg">→</span>
-                    </button>
+        <div id="heroSection" class="hero-section">
+            <section class="hero-content">
+                <div class="hero-spacing">
+                    <h1 class="hero-title">Contact list verification</h1>
+                    <p class="hero-description">We'll verify your contact list to ensure all email addresses are legitimate.</p>
+                    <div class="hero-actions">
+                        <button id="verifyNowBtn" class="btn-verify">
+                            Verify now
+                            <span aria-hidden="true" class="btn-verify-arrow">→</span>
+                        </button>
+                    </div>
+                    <p class="hero-terms">
+                        By uploading your CSV, you agree to our <button class="terms-link open-modal">terms and privacy policy</button>.
+                    </p>
                 </div>
-                <p class="text-sm text-slate-400/70 mt-4">
-                    By uploading your CSV, you agree to our <button class="open-modal underline transition hover:text-white cursor-pointer">terms and privacy policy</button>.
-                </p>
             </section>
         </div>
 
         <!-- Upload Section -->
-        <div id="uploadSection" class="upload-section flex items-center justify-center min-h-[calc(100vh-88px)] p-8 transition-all duration-500">
-            <div class="w-full max-w-3xl p-8 rounded-2xl border border-white/10 shadow-2xl backdrop-blur">
+        <div id="uploadSection" class="upload-section">
+            <div class="upload-container">
                 <!-- Initial Upload State -->
-                <div id="uploadState" class="flex items-center gap-6">
-                    <div class="flex-shrink-0">
-                        <img src="https://pattens-tech.github.io/email-validator/assets/upload-icon.png" alt="Upload" class="w-10">
+                <div id="uploadState" class="upload-state">
+                    <div class="state-icon">
+                        <img src="https://pattens-tech.github.io/email-validator/assets/upload-icon.png" alt="Upload" class="icon-img">
                     </div>
-                    <div id="dropZone" class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl cursor-pointer transition-all bg-slate-800/50 hover:border-white/60 hover:bg-slate-800/70">
-                        <p class="text-white text-xl text-center">Upload now</p>
-                        <p class="text-gray-300 text-sm text-center mt-2">Drag & Drop a CSV of emails only</p>
+                    <div id="dropZone" class="drop-zone">
+                        <p class="drop-zone-title">Upload now</p>
+                        <p class="drop-zone-subtitle">Drag & Drop a CSV of emails only</p>
                         <input type="file" id="fileInput" accept=".csv" class="hidden">
                     </div>
                 </div>
 
                 <!-- Loading State -->
-                <div id="loadingState" class="hidden items-center gap-6">
-                    <div class="flex-shrink-0">
+                <div id="loadingState" class="hidden upload-state">
+                    <div class="state-icon">
                         <div class="spinner"></div>
                     </div>
-                    <div class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl bg-slate-800/50">
-                        <p class="text-white text-xl text-center mb-4">
+                    <div class="loading-content">
+                        <p class="loading-text">
                             Validating <span id="emailCountDisplay">your emails</span>...
                         </p>
-                        <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
-                            <div id="progressBar" class="h-full bg-white transition-all duration-100" style="width: 0%"></div>
+                        <div class="progress-bar-container">
+                            <div id="progressBar" class="progress-bar"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Success State -->
-                <div id="successState" class="hidden items-center gap-6">
-                    <div class="flex-shrink-0">
-                        <img src="https://pattens-tech.github.io/email-validator/assets/list.clipboard.png" alt="Success" class="w-10">
+                <div id="successState" class="hidden upload-state">
+                    <div class="state-icon">
+                        <img src="https://pattens-tech.github.io/email-validator/assets/list.clipboard.png" alt="Success" class="icon-img">
                     </div>
-                    <div class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl text-center bg-slate-800/50">
+                    <div class="success-content">
                         <!-- Summary View (default) -->
                         <div id="summaryView">
-                            <div id="resultPercentage" class="text-6xl font-bold text-white leading-none">87%</div>
-                            <div class="text-slate-200/80 text-lg mt-2">Emails verified</div>
-                            <div class="mt-4 text-sm text-slate-300 space-y-1 bg-slate-900/30 rounded-lg p-4">
-                                <div class="flex justify-between">
+                            <div id="resultPercentage" class="result-percentage">87%</div>
+                            <div class="result-label">Emails verified</div>
+                            <div class="result-details">
+                                <div class="result-row">
                                     <span>✓ Valid emails:</span>
-                                    <span id="validCount" class="font-semibold text-green-400">0</span>
+                                    <span id="validCount" class="valid-count">0</span>
                                 </div>
-                                <div class="flex justify-between">
+                                <div class="result-row">
                                     <span>✗ Invalid emails:</span>
-                                    <span id="invalidCount" class="font-semibold text-red-400">0</span>
+                                    <span id="invalidCount" class="invalid-count">0</span>
                                 </div>
-                                <div class="flex justify-between border-t border-white/10 pt-2 mt-2">
+                                <div class="result-row-total">
                                     <span>Total processed:</span>
-                                    <span id="totalCount" class="font-semibold text-white">0</span>
+                                    <span id="totalCount" class="total-count">0</span>
                                 </div>
                             </div>
-                            <div class="mt-6 flex gap-3">
-                                <button onclick="openPaymentModal()" class="flex-1 px-8 py-3 rounded-xl bg-blue-600 border border-blue-500 text-white font-medium transition-all hover:bg-blue-700 hover:border-blue-600 cursor-pointer">Unlock Full Report - £9.99</button>
-                                <button onclick="resetForm()" class="flex-1 px-8 py-3 rounded-xl bg-white/15 border border-white/30 text-white font-medium transition-all hover:bg-white/25 hover:border-white/50 cursor-pointer">Validate another file</button>
+                            <div class="result-actions">
+                                <button onclick="openPaymentModal()" class="btn-unlock">Unlock Full Report - £9.99</button>
+                                <button onclick="resetForm()" class="btn-validate-another">Validate another file</button>
                             </div>
                         </div>
 
                         <!-- Detailed View (after payment) -->
-                        <div id="detailedView" class="hidden">
-                            <h3 class="text-2xl font-bold text-white mb-2">Full Report</h3>
-                            <p class="text-slate-300 mb-4"><span id="detailedTotalCount">0</span> emails analyzed</p>
+                        <div id="detailedView" class="detailed-view">
+                            <h3 class="detailed-title">Full Report</h3>
+                            <p class="detailed-subtitle"><span id="detailedTotalCount">0</span> emails analyzed</p>
                             
                             <!-- Email list container -->
-                            <div class="bg-slate-900/30 rounded-lg p-4 max-h-96 overflow-y-auto text-left">
-                                <div id="emailList" class="space-y-2">
+                            <div class="email-list-container">
+                                <div id="emailList" class="email-list">
                                     <!-- Email items will be inserted here -->
                                 </div>
                             </div>
 
                             <!-- Action buttons -->
-                            <div class="mt-6 flex gap-3">
-                                <button onclick="downloadCSV()" class="flex-1 px-8 py-3 rounded-xl bg-green-600 border border-green-500 text-white font-medium transition-all hover:bg-green-700 hover:border-green-600 cursor-pointer">Download CSV</button>
-                                <button onclick="resetForm()" class="flex-1 px-8 py-3 rounded-xl bg-white/15 border border-white/30 text-white font-medium transition-all hover:bg-white/25 hover:border-white/50 cursor-pointer">Validate another file</button>
+                            <div class="result-actions">
+                                <button onclick="downloadCSV()" class="btn-download">Download CSV</button>
+                                <button onclick="resetForm()" class="btn-validate-another">Validate another file</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Error State -->
-                <div id="errorState" class="hidden items-center gap-6">
-                    <div class="flex-shrink-0">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center">
+                <div id="errorState" class="hidden upload-state">
+                    <div class="state-icon">
+                        <div class="error-icon-container">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="15" y1="9" x2="9" y2="15"></line>
@@ -377,31 +293,31 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="flex-1 p-8 border-2 border-dashed border-white/30 rounded-xl text-center bg-slate-800/50">
-                        <div id="errorMessage" class="text-white/90 text-lg">Error, try again.</div>
-                        <button onclick="resetForm()" class="mt-6 px-8 py-3 rounded-xl bg-white/15 border border-white/30 text-white font-medium transition-all hover:bg-white/25 hover:border-white/50 cursor-pointer">Try Again</button>
+                    <div class="error-content">
+                        <div id="errorMessage" class="error-message">Error, try again.</div>
+                        <button onclick="resetForm()" class="btn-try-again">Try Again</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Terms & Privacy Modal -->
-        <div id="termsModal" class="modal fixed inset-0 z-[9999] overflow-hidden hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-            <div class="modal-overlay absolute inset-0 bg-black/85 backdrop-blur"></div>
-            <div class="modal-container relative w-full h-full flex items-center justify-center p-4 overflow-y-auto">
-                <div class="modal-content relative rounded-2xl border border-white/10 max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl shadow-2xl backdrop-blur" style="background: linear-gradient(135deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);">
-                    <div class="flex items-center justify-between p-6 border-b border-white/10">
-                        <h2 id="modalTitle" class="text-2xl font-semibold text-white">Terms & Privacy</h2>
-                        <button id="closeModal" class="flex items-center justify-center w-10 h-10 rounded-lg bg-transparent border border-white/20 text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white" aria-label="Close modal">
+        <div id="termsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-overlay"></div>
+            <div class="modal-container">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="modalTitle" class="modal-title">Terms & Privacy</h2>
+                        <button id="closeModal" class="modal-close" aria-label="Close modal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
                                 <line x1="6" y1="6" x2="18" y2="18"></line>
                             </svg>
                         </button>
                     </div>
-                    <div class="p-6 overflow-y-auto max-h-[calc(90vh-5rem)] text-slate-200">
-                        <h3 class="text-lg font-semibold text-white mb-3">Terms & Conditions</h3>
-                        <p class="leading-relaxed mb-4 text-slate-300">
+                    <div class="modal-body">
+                        <h3 class="modal-section-title">Terms & Conditions</h3>
+                        <p class="modal-text">
                             
 Effective Date: 29-10-2025
 </p>
@@ -444,10 +360,10 @@ Any disputes will be subject to the exclusive jurisdiction of the courts of Engl
 
 </p>
 
-                        <h3 class="text-lg font-semibold text-white mt-6 mb-3">Privacy Policy</h3>
+                        <h3 class="modal-section-title modal-section-spacing">Privacy Policy</h3>
 
 
-                        <p class="leading-relaxed mb-4 text-slate-300">
+                        <p class="modal-text">
                             
 Effective Date: 29-10-2025
 </p>
@@ -498,66 +414,66 @@ Any updates will appear on this page with a revised effective date.
         </div>
 
         <!-- Payment Modal -->
-        <div id="paymentModal" class="modal fixed inset-0 z-[9999] overflow-hidden hidden" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
-            <div class="modal-overlay absolute inset-0 bg-black/85 backdrop-blur"></div>
-            <div class="modal-container relative w-full h-full flex items-center justify-center p-4">
-                <div class="modal-content relative rounded-2xl border border-white/10 max-w-md w-full overflow-hidden shadow-2xl backdrop-blur" style="background: linear-gradient(135deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%);">
-                    <div class="flex items-center justify-between p-6 border-b border-white/10">
-                        <h2 id="paymentModalTitle" class="text-2xl font-semibold text-white">Unlock Full Report</h2>
-                        <button id="closePaymentModal" class="flex items-center justify-center w-10 h-10 rounded-lg bg-transparent border border-white/20 text-slate-300 transition-all hover:bg-white/10 hover:border-white/30 hover:text-white" aria-label="Close payment modal">
+        <div id="paymentModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+            <div class="modal-overlay"></div>
+            <div class="modal-container">
+                <div class="modal-content payment-modal-content">
+                    <div class="modal-header">
+                        <h2 id="paymentModalTitle" class="modal-title">Unlock Full Report</h2>
+                        <button id="closePaymentModal" class="modal-close" aria-label="Close payment modal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
                                 <line x1="6" y1="6" x2="18" y2="18"></line>
                             </svg>
                         </button>
                     </div>
-                    <div class="p-6">
-                        <p class="text-slate-300 mb-6">Get access to the full detailed report with all email addresses and their validation status, plus CSV download.</p>
+                    <div class="modal-body">
+                        <p class="modal-text">Get access to the full detailed report with all email addresses and their validation status, plus CSV download.</p>
                         
                         <!-- Price display -->
-                        <div class="mb-6 p-4 rounded-lg bg-white/5 border border-white/10">
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-300">Full Report Access</span>
-                                <span class="text-2xl font-bold text-white">£9.99</span>
+                        <div class="payment-price">
+                            <div class="payment-price-row">
+                                <span class="payment-price-label">Full Report Access</span>
+                                <span class="payment-price-value">£9.99</span>
                             </div>
                         </div>
                         
                         <!-- Loading state -->
-                        <div id="paymentLoading" class="hidden text-center py-8">
-                            <div class="inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-                            <p class="text-white mt-4">Preparing checkout...</p>
+                        <div id="paymentLoading" class="hidden payment-loading">
+                            <div class="payment-loading-spinner"></div>
+                            <p class="payment-loading-text">Preparing checkout...</p>
                         </div>
                         
                         <!-- Payment form -->
-                        <form id="paymentForm" class="hidden">
+                        <form id="paymentForm" class="payment-form">
                             <!-- Payment Element container -->
-                            <div id="paymentElement" class="mb-4"></div>
+                            <div id="paymentElement" class="payment-element-container"></div>
                             
                             <!-- Submit button -->
-                            <button id="submitPayment" type="submit" class="w-full px-6 py-3 rounded-lg font-semibold text-white transition-all bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button id="submitPayment" type="submit" class="btn-payment-submit">
                                 <span id="buttonText">Pay £9.99</span>
-                                <span id="buttonSpinner" class="hidden inline-block w-4 h-4 ml-2 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                <span id="buttonSpinner" class="hidden payment-button-spinner"></span>
                             </button>
                         </form>
                         
                         <!-- Error message -->
-                        <div id="paymentError" class="hidden text-red-400 text-sm p-3 bg-red-900/20 border border-red-500/30 rounded-lg mb-4"></div>
+                        <div id="paymentError" class="hidden payment-error"></div>
                         
                         <!-- Success message -->
-                        <div id="paymentSuccess" class="hidden text-center py-8">
-                            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 border-2 border-green-500 mb-4">
-                                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div id="paymentSuccess" class="hidden payment-success">
+                            <div class="payment-success-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-xl font-semibold text-white mb-2">Payment Successful!</h3>
-                            <p class="text-slate-300 mb-4">Your full report is now available.</p>
-                            <button id="viewReportBtn" class="px-6 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+                            <h3 class="payment-success-title">Payment Successful!</h3>
+                            <p class="payment-success-text">Your full report is now available.</p>
+                            <button id="viewReportBtn" class="btn-view-report">
                                 View Full Report
                             </button>
                         </div>
                         
-                        <p class="text-xs text-slate-400 text-center mt-4">Secure payment powered by Stripe</p>
+                        <p class="payment-footer-text">Secure payment powered by Stripe</p>
                     </div>
                 </div>
             </div>
@@ -565,10 +481,10 @@ Any updates will appear on this page with a revised effective date.
     </main>
     
     <!-- Footer -->
-    <footer class="relative z-10 mt-auto border-t border-white/10 px-6 py-6 text-center text-slate-400/70 md:px-12">
-        <a href="https://pattens.tech" class="text-slate-300 transition hover:text-white">
+    <footer class="footer">
+        <a href="https://pattens.tech" class="footer-link">
             Powered by 
-            <span class="underline">Pattens</span>
+            <span class="footer-underline">Pattens</span>
             : Built by AI
         </a>
     </footer>
@@ -665,16 +581,16 @@ Any updates will appear on this page with a revised effective date.
 
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropZone.classList.add('border-blue-400', 'bg-blue-900/10', 'scale-105');
+            dropZone.classList.add('drag-over');
         });
 
         dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-blue-400', 'bg-blue-900/10', 'scale-105');
+            dropZone.classList.remove('drag-over');
         });
 
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.classList.remove('border-blue-400', 'bg-blue-900/10', 'scale-105');
+            dropZone.classList.remove('drag-over');
             const file = e.dataTransfer.files[0];
             if (file) handleFile(file);
         });
@@ -1020,21 +936,17 @@ Any updates will appear on this page with a revised effective date.
 
             emails.forEach(item => {
                 const row = document.createElement('div');
-                row.className = 'flex items-center justify-between p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 transition-colors';
+                row.className = 'email-item';
                 
                 const emailSpan = document.createElement('span');
-                emailSpan.className = 'text-slate-200 truncate flex-1 mr-4 text-sm';
+                emailSpan.className = 'email-text';
                 emailSpan.textContent = item.email;
                 emailSpan.title = item.email; // Show full email on hover
                 
                 const badge = document.createElement('span');
                 // Use the valid boolean field to determine display status
                 const isValid = item.valid === true || item.status === 'Valid';
-                badge.className = `px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${
-                    isValid
-                        ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                        : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                }`;
+                badge.className = isValid ? 'status-badge status-badge-valid' : 'status-badge status-badge-invalid';
                 badge.textContent = isValid ? 'Valid' : 'Invalid';
                 
                 row.appendChild(emailSpan);
